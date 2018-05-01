@@ -14,7 +14,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 
-import exunion.config.Configuration;
 import exunion.httpclient.Client;
 import exunion.metaobjects.Account;
 import exunion.metaobjects.Depth;
@@ -29,9 +28,9 @@ import exunion.util.UrlParameterBuilder;
 
 public class ZbExchange implements Exchange {
 	
-	private static final String KEY = Configuration.getProperties().getStringProperty("zb.com.key");
+	private static String KEY = "";
 	
-	private static final String SECRET = EncryptionTools.SHA1(Configuration.getProperties().getStringProperty("zb.com.secret"));
+	private static String SECRET = "";
 	
 	private static final Logger logger = LogManager.getLogger(ZbExchange.class);
 	
@@ -74,6 +73,14 @@ public class ZbExchange implements Exchange {
 			return l;
 		}
 	}; 
+	
+	public static void setKey(String key){
+		KEY = key;
+	}
+	
+	public static void setSecret(String secret){
+		SECRET = EncryptionTools.SHA1(secret);
+	}
 	
 	public ZbExchange(){
 		client = new Client();
