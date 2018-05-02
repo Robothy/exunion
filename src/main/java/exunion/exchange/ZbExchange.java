@@ -86,6 +86,10 @@ public class ZbExchange implements Exchange {
 		client = new Client();
 	}
 	
+	public ZbExchange(String proxyHost, int port){
+		client = new Client(proxyHost, port);
+	}
+	
 	//获取账户信息
 	public Account getAccount() {
 		
