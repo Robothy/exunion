@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
@@ -35,6 +36,16 @@ public class Client {
 	 */
 	public Client(){
 		this.client = clientBuilder.build();
+	}
+	
+	/**
+	 * 构建一个带代理服务器的 Client 
+	 * @param proxyHost 代理服务器地址
+	 * @param port 代理端口
+	 * 
+	 */
+	public Client(String proxyHost, int port){
+		this.client = clientBuilder.setProxy(new HttpHost(proxyHost, port)).build();
 	}
 	
 	/**
