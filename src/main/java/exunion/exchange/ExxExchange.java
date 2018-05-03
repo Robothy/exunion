@@ -16,7 +16,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 
-import exunion.httpclient.Client;
 import exunion.metaobjects.Account;
 import exunion.metaobjects.Depth;
 import exunion.metaobjects.Order;
@@ -27,16 +26,10 @@ import exunion.metaobjects.Depth.PriceQuotation;
 import exunion.standardize.Standardizable;
 import exunion.util.UrlParameterBuilder;
 
-public class ExxExchange implements Exchange {
-	
-	private static String KEY = "";
-	
-	private static String SECRET = "";
+public class ExxExchange extends AExchange {
 	
 	private static final Logger logger = LogManager.getLogger(ExxExchange.class);
 	
-	private Client client = null;
-
 	private static final String PLANTFORM = "exx.com";
 	
 	private static final Standardizable<String, String> currencyStandardizer = new Standardizable<String, String>() {
@@ -78,20 +71,8 @@ public class ExxExchange implements Exchange {
 		}
 	}; 
 	
-	public static void setKey(String key){
-		KEY = key;
-	}
-	
-	public static void setSecret(String secret){
-		SECRET = secret;
-	}
-	
-	public ExxExchange(){
-		client = new Client();
-	}
-	
-	public ExxExchange(String proxyHost, int port){
-		client = new Client(proxyHost, port);
+	public ExxExchange(Boolean needProxy){
+		super(needProxy);
 	}
 	
 	//获取账户信息

@@ -14,7 +14,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 
-import exunion.httpclient.Client;
 import exunion.metaobjects.Account;
 import exunion.metaobjects.Depth;
 import exunion.metaobjects.Order;
@@ -26,16 +25,10 @@ import exunion.standardize.Standardizable;
 import exunion.util.EncryptionTools;
 import exunion.util.UrlParameterBuilder;
 
-public class ZbExchange implements Exchange {
-	
-	private static String KEY = "";
-	
-	private static String SECRET = "";
+public class ZbExchange extends AExchange {
 	
 	private static final Logger logger = LogManager.getLogger(ZbExchange.class);
 	
-	private Client client = null;
-
 	private static final String PLANTFORM = "zb.com";
 	
 	private static final Standardizable<String, String> currencyStandizer = new Standardizable<String, String>() {
@@ -72,22 +65,18 @@ public class ZbExchange implements Exchange {
 			}
 			return l;
 		}
-	}; 
+	};
 	
-	public static void setKey(String key){
-		KEY = key;
+	/**
+	 * 
+	 * @param needProxy true - 走代理 false - 不走代理
+	 */
+	public ZbExchange(Boolean needProxy){
+		super(needProxy);
 	}
 	
 	public static void setSecret(String secret){
 		SECRET = EncryptionTools.SHA1(secret);
-	}
-	
-	public ZbExchange(){
-		client = new Client();
-	}
-	
-	public ZbExchange(String proxyHost, int port){
-		client = new Client(proxyHost, port);
 	}
 	
 	//获取账户信息
