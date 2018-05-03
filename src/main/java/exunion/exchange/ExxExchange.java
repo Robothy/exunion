@@ -7,7 +7,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,12 +25,7 @@ import exunion.metaobjects.Ticker;
 import exunion.metaobjects.Account.Balance;
 import exunion.metaobjects.Depth.PriceQuotation;
 import exunion.standardize.Standardizable;
-import exunion.util.EncryptionTools;
 import exunion.util.UrlParameterBuilder;
-import traderobot.trade.exx.com.ExxDepth;
-import traderobot.trade.exx.com.ExxOrder;
-import traderobot.trade.exx.com.ExxTicker;
-import traderobot.trade.exx.com.Fund;
 
 public class ExxExchange implements Exchange {
 	
@@ -308,12 +302,13 @@ public class ExxExchange implements Exchange {
 		    }
 		    
 		    JSONArray ods = JSON.parseArray(json);
-		    for(JSONObject obj : ods){
-		    	;
+		    for(int i=0; i<ods.size(); i++){
+		    	JSONObject obj = ods.getJSONObject(i);
+		    	Order order = parseOrder(obj);
+		    	orders.add(order);
 		    }
 		    
-			orders.addAll(partOrder);
-			if (partOrder.size() < 10){	// 一页10条，若少于10条，则表示是最后一页
+			if (ods.size() < 10){	// 一页10条，若少于10条，则表示是最后一页
 				break;
 			}
 		}
@@ -342,43 +337,35 @@ public class ExxExchange implements Exchange {
 
 	//下订单
 	public Order order(String side, String currency, BigDecimal quantity, BigDecimal price) {
-		String tradeType = side.equals("BUY")? "1" : side.equals("SELL") ? "0" : side;
-		String localCurrency = currencyStandardizer.localize(currency);
 		Map<String, String> params = new HashMap<String, String>();
-		params.put("tradeType", tradeType);
-		params.put("currency", localCurrency);
-		params.put("method", "order");
 		params.put("accesskey", KEY);
-		params.put("price", price.toString());
 		params.put("amount", quantity.toString());
-		String urlParams = UrlParameterBuilder.buildUrlParamsWithHmacMD5Sign(SECRET, "sign", params);
-		urlParams = urlParams + "&reqTime=" + new Long(System.currentTimeMillis()).toString();
-		String json = client.get("https://trade.zb.com/api/order?" + urlParams);
-		String errorMessage = "在" + PLANTFORM + "下订单 [side=" + side + ", currency=" +currency + ", price=" + price + ", quantity=" + quantity + "]失败。";
+		params.put("currency", currencyStandardizer.localize(currency));
+		params.put("nonce", new Long(System.currentTimeMillis()).toString());
+		params.put("price", price.toString());
+		params.put("type", "BUY".equals(side) ? "buy" : "sell");
+		String urlParams = UrlParameterBuilder.buildUrlParamsWithHmacSHA512Sign(SECRET, "signature", params);
+		String json = client.get("https://trade.exx.com/api/order?" + urlParams);
 		
-		if(null == json){
-			logger.error(errorMessage + "服务器无数据返回。");
+		String orderInfo = "[ side:" + side + ", currency:" + currency + ", quantity:" + quantity + ", price:" + price + " ]";
+		
+		if (null == json){
+			logger.error("下订单"+ orderInfo +"时出错。服务器无返回结果。");
 			return null;
 		}
 		
-		Order order = null;
-		try {
-			JSONObject jsonObject = JSON.parseObject(json);
-			String code = jsonObject.getString("code");
-			if(!"1000".equals(code)){
-				logger.error(errorMessage + "服务器返回错误信息：" + json);
-				return null;
-			}else{
-				order = new Order();
-				order.setOrderId(jsonObject.getString("id"));
-			}
-		} catch (JSONException e) {
-			logger.error(errorMessage + "解析 json 文本时出现异常。" + json, e);
-			return null;
+		if(!json.contains("操作成功")){
+			logger.error("下订单{}出错，服务器返回错误信息：{}" , orderInfo, json);
 		}
+		
+		JSONObject jsonObject = JSON.parseObject(json);
+		Order order = new Order();
+		order.setOrderId(jsonObject.getString("id"));
+		order.setPrice(price);
 		order.setCurrency(currency);
 		order.setSide(side);
 		order.setStatus(OrderStatus.NEW);
+		logger.info("下单成功。" + orderInfo);
 		return order;
 	}
 
