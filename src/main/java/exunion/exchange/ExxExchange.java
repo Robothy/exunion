@@ -115,7 +115,6 @@ public class ExxExchange implements Exchange {
 		for(String fundName : funds.keySet()){
 			Balance bal = new Balance();
 			bal.setAsset(fundName);
-			JSONObject fundObject = funds.getJSONObject(fundName);
 			BigDecimal total = funds.getJSONObject(fundName).getBigDecimal("total");
 			BigDecimal freeze = funds.getJSONObject(fundName).getBigDecimal("freeze");
 			bal.setFree(total.subtract(freeze));
@@ -264,11 +263,8 @@ public class ExxExchange implements Exchange {
 	    	logger.error(errorMessage + "服务器返回错误信息：" + json);
 	    	return null;
 	    }
-		
-	    Order order = new Order();
-	    JSONObject exxOrder = JSON.parseObject(json);
-	    
-		return order;
+	    Order order = parseOrder(JSON.parseObject(json));
+	    return order;
 	}
 
 	// 获取所有的挂单
