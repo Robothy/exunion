@@ -10,6 +10,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -29,13 +30,15 @@ public class Client {
 	
 	private static final HttpClientBuilder clientBuilder = HttpClientBuilder.create();
 	
+	private static final RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
+	
 	private HttpClient client = null;
 	
 	/**
 	 * 构建一个新的 Clinet
 	 */
 	public Client(){
-		this.client = clientBuilder.build();
+		this(null, 0);
 	}
 	
 	/**
@@ -45,7 +48,16 @@ public class Client {
 	 * 
 	 */
 	public Client(String proxyHost, int port){
-		this.client = clientBuilder.setProxy(new HttpHost(proxyHost, port)).build();
+		RequestConfig requestConfig = requestConfigBuilder
+				.setConnectTimeout(3000)
+				.setSocketTimeout(3000)
+				.setConnectionRequestTimeout(3000)
+				.build();
+		
+		this.client = clientBuilder
+				.setProxy(new HttpHost(proxyHost, port))
+				.setDefaultRequestConfig(requestConfig)
+				.build();
 	}
 	
 	/**
