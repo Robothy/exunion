@@ -1,8 +1,6 @@
 package exunion.httpclient;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,31 +33,26 @@ public class ProxyPool {
 	static{
 		ClassLoader classLoader = ProxyPool.class.getClassLoader();
 		
-		URL resource = classLoader.getResource(proxyFileName);
+		InputStream proxyFileStream = classLoader.getResourceAsStream(proxyFileName);
 		
-		if(null == resource){
+		if(null == proxyFileStream){
 			logger.info("加载代理服务器配置时未能找到配置文件 {}", proxyFileName);
 		}else{
-			String fileName = resource.getFile();
 			logger.info("加载代理服务器配置。");
-			File file = new File(fileName);
 			Scanner scanner = null;
-			try {
-				scanner = new Scanner(file);
-				while(scanner.hasNextLine()){
-					String line = scanner.nextLine().trim();
-					if("".equals(line) || line.startsWith("#")){
-						continue;
-					}
-					String[] arr = line.split(":");
-					String ip = arr[0];
-					Integer port = new Integer(arr[1]);
-					ProxyServer proxyServer = new ProxyServer(ip, port);
-					proxies.add(proxyServer);
+			scanner = new Scanner(proxyFileStream);
+			while(scanner.hasNextLine()){
+				String line = scanner.nextLine().trim();
+				if("".equals(line) || line.startsWith("#")){
+					continue;
 				}
-			} catch (FileNotFoundException e) {
-				logger.error("读取代理服务器配置文件" + proxyFileName + " 时出现异常", e);
+				String[] arr = line.split(":");
+				String ip = arr[0];
+				Integer port = new Integer(arr[1]);
+				ProxyServer proxyServer = new ProxyServer(ip, port);
+				proxies.add(proxyServer);
 			}
+			scanner.close();
 		}
 	}
 	
