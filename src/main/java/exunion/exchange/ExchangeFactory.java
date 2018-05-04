@@ -37,11 +37,11 @@ public class ExchangeFactory {
 	public static Exchange newInstance(String plantform, 
 			String key, String secret, Boolean needProxy){
 		if (plantform.equals("exx.com")){
-			return new ExxExchange(secret, key, needProxy);
+			return new ExxExchange(key, secret, needProxy);
 		}else if(plantform.equals("binance.com")){
 			return new BinanceExchange();
 		}else if (plantform.equals("zb.com")) {
-			return new ZbExchange(secret, key, needProxy);
+			return new ZbExchange(key, secret, needProxy);
 		}else {
 			LOGGER.error("未找到 " + plantform + " 的交易所实例。");
 			return null;

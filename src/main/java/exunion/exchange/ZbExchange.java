@@ -74,12 +74,7 @@ public class ZbExchange extends AExchange {
 	 * @param needProxy 是否需要走代理标志
 	 */
 	protected ZbExchange(String key, String secret, Boolean needProxy){
-		super(key, secret, needProxy);
-	}
-	
-	public AExchange setSecret(String secret){
-		secret = EncryptionTools.SHA1(secret);
-		return this;
+		super(key, EncryptionTools.SHA1(secret), needProxy);
 	}
 	
 	//获取账户信息
