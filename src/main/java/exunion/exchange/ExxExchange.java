@@ -79,9 +79,9 @@ public class ExxExchange extends AExchange {
 	public Account getAccount() {
 		Map<String, String> params = new HashMap<String, String>();
 		
-		params.put("accesskey", KEY);
+		params.put("accesskey", key);
 		params.put("nonce", new Long(System.currentTimeMillis()).toString());
-		String urlParams = UrlParameterBuilder.buildUrlParamsWithHmacSHA512Sign(SECRET, null, params);
+		String urlParams = UrlParameterBuilder.buildUrlParamsWithHmacSHA512Sign(secret, null, params);
 		String json = client.get("https://trade.exx.com/api/getBalance?" + urlParams);
 		String errorMessage = "获取 "+PLANTFORM+" 中的账户信息时出错，";
 		if (null == json ){
@@ -229,9 +229,9 @@ public class ExxExchange extends AExchange {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("currency", currencyStandardizer.localize(currency));
 		params.put("id", orderId);
-		params.put("accesskey", KEY);
+		params.put("accesskey", key);
 		params.put("nonce", new Long(System.currentTimeMillis()).toString());
-		String urlParams = UrlParameterBuilder.buildUrlParamsWithHmacSHA512Sign(SECRET, null, params);
+		String urlParams = UrlParameterBuilder.buildUrlParamsWithHmacSHA512Sign(secret, null, params);
 		String json = client.get("https://trade.exx.com/api/getOrder?" + urlParams);
 		String errorMessage = "从" + PLANTFORM + "获取定单 [currency=" + currency + ", orderId=" + orderId + " 的信息时失败， ";
 		if (null == json){
@@ -256,7 +256,7 @@ public class ExxExchange extends AExchange {
 		if(null != side){
 			params.put("type", side);
 		}
-		params.put("accesskey", KEY);
+		params.put("accesskey", key);
 		String errorMessage = "从" + PLANTFORM + "获取[currency"+currency+", side="+side+"]的所有挂单信息时出错， ";
 		List<Order> orders = new ArrayList<Order>();
 		for(int page = 1; page < 1000; page++){
@@ -264,7 +264,7 @@ public class ExxExchange extends AExchange {
 			String pageIndex = new Integer(page).toString();
 			params.put("nonce", nonce);
 			params.put("pageIndex", pageIndex);
-			String urlParams = UrlParameterBuilder.buildUrlParamsWithHmacSHA512Sign(SECRET, null, params);
+			String urlParams = UrlParameterBuilder.buildUrlParamsWithHmacSHA512Sign(secret, null, params);
 			String json = client.get("https://trade.exx.com/api/getOpenOrders?" + urlParams);
 			
 			if (null == json){
@@ -315,13 +315,13 @@ public class ExxExchange extends AExchange {
 	//下订单
 	public Order order(String side, String currency, BigDecimal quantity, BigDecimal price) {
 		Map<String, String> params = new HashMap<String, String>();
-		params.put("accesskey", KEY);
+		params.put("accesskey", key);
 		params.put("amount", quantity.toString());
 		params.put("currency", currencyStandardizer.localize(currency));
 		params.put("nonce", new Long(System.currentTimeMillis()).toString());
 		params.put("price", price.toString());
 		params.put("type", "BUY".equals(side) ? "buy" : "sell");
-		String urlParams = UrlParameterBuilder.buildUrlParamsWithHmacSHA512Sign(SECRET, "signature", params);
+		String urlParams = UrlParameterBuilder.buildUrlParamsWithHmacSHA512Sign(secret, "signature", params);
 		String json = client.get("https://trade.exx.com/api/order?" + urlParams);
 		
 		String orderInfo = "[ side:" + side + ", currency:" + currency + ", quantity:" + quantity + ", price:" + price + " ]";
@@ -350,11 +350,11 @@ public class ExxExchange extends AExchange {
 	public Order cancel(String currency, String orderId) {
 		String localCurrency = currencyStandardizer.localize(currency);
 		Map<String, String> params = new HashMap<String, String>();
-		params.put("accesskey", KEY);
+		params.put("accesskey", key);
 		params.put("currency", localCurrency);
 		params.put("id", orderId);
 		params.put("method", "cancelOrder");
-		String urlParams = UrlParameterBuilder.buildUrlParamsWithHmacMD5Sign(SECRET, "sign", params);
+		String urlParams = UrlParameterBuilder.buildUrlParamsWithHmacMD5Sign(secret, "sign", params);
 		urlParams = urlParams + "&reqTime=" + new Long(System.currentTimeMillis()).toString();
 		String json = client.get("https://trade.zb.com/api/cancelOrder?" + urlParams);
 		String errorMessage = "取消订单[ currency=" + currency + ", orderId=" + orderId + "]失败。";

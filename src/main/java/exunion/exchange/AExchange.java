@@ -12,10 +12,12 @@ public abstract class AExchange implements Exchange {
 	protected Client client = null;
 	
 	private static final Logger logger = LogManager.getLogger(AExchange.class);
+
+	protected static final AExchange exchange = null;
 	
-	protected static String KEY = "";
+	protected String key = "";
 	
-	protected static String SECRET = "";
+	protected String secret = "";
 	
 	public AExchange(Boolean needProxy){
 
@@ -24,20 +26,21 @@ public abstract class AExchange implements Exchange {
 				ProxyServer proxyServer = ProxyPool.next();			
 				client = new Client(proxyServer.getIpAddress(), proxyServer.getPost());
 			}else{
-				logger.warn("没有代理服务器的配置信息。");
+				logger.warn("获取代理服务器信息失败，没有代理服务器的配置信息。");
 				client = new Client();
 			}			
 		}else{
 			client = new Client();
 		}
-	
 	}
 	
-	public static void setKey(String key){
-		KEY = key;
+	public AExchange setKey(String key){
+		this.key = key;
+		return this;
 	}
 	
-	public static void setSecret(String secret){
-		SECRET = secret;
+	public AExchange setSecret(String secret){
+		this.secret = secret;
+		return this;
 	}
 }

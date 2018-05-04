@@ -75,8 +75,9 @@ public class ZbExchange extends AExchange {
 		super(needProxy);
 	}
 	
-	public static void setSecret(String secret){
-		SECRET = EncryptionTools.SHA1(secret);
+	public AExchange setSecret(String secret){
+		secret = EncryptionTools.SHA1(secret);
+		return this;
 	}
 	
 	//获取账户信息
@@ -84,8 +85,8 @@ public class ZbExchange extends AExchange {
 		
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("method", "getAccountInfo");
-		params.put("accesskey", KEY);
-		String urlParams = UrlParameterBuilder.buildUrlParamsWithHmacMD5Sign(SECRET, "sign", params);
+		params.put("accesskey", key);
+		String urlParams = UrlParameterBuilder.buildUrlParamsWithHmacMD5Sign(secret, "sign", params);
 		urlParams = urlParams + "&reqTime=" + new Long(System.currentTimeMillis()).toString();
 		String json = client.get("https://trade.zb.com/api/getAccountInfo?" + urlParams );
 		
@@ -219,11 +220,11 @@ public class ZbExchange extends AExchange {
 	public Order getOrder(String currency, String orderId) {
 		String localCurrency = currencyStandizer.localize(currency);
 		Map<String, String> params = new HashMap<String, String>();
-		params.put("accesskey", KEY);
+		params.put("accesskey", key);
 		params.put("currency", localCurrency);
 		params.put("id", orderId);
 		params.put("method", "getOrder");
-		String urlParams = UrlParameterBuilder.buildUrlParamsWithHmacMD5Sign(SECRET, "sign", params);
+		String urlParams = UrlParameterBuilder.buildUrlParamsWithHmacMD5Sign(secret, "sign", params);
 		urlParams = urlParams + "&reqTime=" + new Long(System.currentTimeMillis()).toString();
 		String json = client.get("https://trade.zb.com/api/getOrder?" + urlParams);
 		String errorMessage = "获取订单[ currency=" + currency + ", orderId=" + orderId + "]的信息失败。";
@@ -253,7 +254,7 @@ public class ZbExchange extends AExchange {
 	public List<Order> getOpenOrders(String currency, String type) {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("method", "getOrders");
-		params.put("accesskey", KEY);
+		params.put("accesskey", key);
 		if(null != type && (type.equals("BUY") || type.equals("SELL"))){
 			params.put("tradeType", type.equals("BUY") ? "1" : "0");
 		}
@@ -265,7 +266,7 @@ public class ZbExchange extends AExchange {
 		for(Integer page = 1; ; page++){
 			params.put("pageIndex", page.toString());
 			String json = client.get("https://trade.zb.com/api/getOrders?" 
-			+ UrlParameterBuilder.buildUrlParamsWithHmacMD5Sign(SECRET, "sign", params) 
+			+ UrlParameterBuilder.buildUrlParamsWithHmacMD5Sign(secret, "sign", params) 
 			+ "&reqTime=" + new Long(System.currentTimeMillis()).toString());
 			if(null == json){
 				logger.warn(errorMessage + "服务器无数据返回。");
@@ -321,10 +322,10 @@ public class ZbExchange extends AExchange {
 		params.put("tradeType", tradeType);
 		params.put("currency", localCurrency);
 		params.put("method", "order");
-		params.put("accesskey", KEY);
+		params.put("accesskey", key);
 		params.put("price", price.toString());
 		params.put("amount", quantity.toString());
-		String urlParams = UrlParameterBuilder.buildUrlParamsWithHmacMD5Sign(SECRET, "sign", params);
+		String urlParams = UrlParameterBuilder.buildUrlParamsWithHmacMD5Sign(secret, "sign", params);
 		urlParams = urlParams + "&reqTime=" + new Long(System.currentTimeMillis()).toString();
 		String json = client.get("https://trade.zb.com/api/order?" + urlParams);
 		String errorMessage = "在" + PLANTFORM + "下订单 [side=" + side + ", currency=" +currency + ", price=" + price + ", quantity=" + quantity + "]失败。";
@@ -359,11 +360,11 @@ public class ZbExchange extends AExchange {
 	public Order cancel(String currency, String orderId) {
 		String localCurrency = currencyStandizer.localize(currency);
 		Map<String, String> params = new HashMap<String, String>();
-		params.put("accesskey", KEY);
+		params.put("accesskey", key);
 		params.put("currency", localCurrency);
 		params.put("id", orderId);
 		params.put("method", "cancelOrder");
-		String urlParams = UrlParameterBuilder.buildUrlParamsWithHmacMD5Sign(SECRET, "sign", params);
+		String urlParams = UrlParameterBuilder.buildUrlParamsWithHmacMD5Sign(secret, "sign", params);
 		urlParams = urlParams + "&reqTime=" + new Long(System.currentTimeMillis()).toString();
 		String json = client.get("https://trade.zb.com/api/cancelOrder?" + urlParams);
 		String errorMessage = "取消订单[ currency=" + currency + ", orderId=" + orderId + "]失败。";
