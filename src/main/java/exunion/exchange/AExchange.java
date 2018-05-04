@@ -7,6 +7,11 @@ import exunion.httpclient.Client;
 import exunion.httpclient.ProxyPool;
 import exunion.httpclient.ProxyPool.ProxyServer;
 
+/**
+ * 交易所抽象类
+ * @author robothy
+ *
+ */
 public abstract class AExchange implements Exchange {
 	
 	protected Client client = null;
@@ -19,8 +24,19 @@ public abstract class AExchange implements Exchange {
 	
 	protected String secret = "";
 	
+	public AExchange(){
+		this(null, null, false);
+	}
+	
 	public AExchange(Boolean needProxy){
-
+		this(null, null, needProxy);
+	}
+	
+	public AExchange(String key, String secret){
+		this(key, secret, false);
+	}
+	
+	public AExchange(String key, String secret, Boolean needProxy){
 		if(needProxy){
 			if(ProxyPool.hasNext()){
 				ProxyServer proxyServer = ProxyPool.next();			
@@ -32,8 +48,10 @@ public abstract class AExchange implements Exchange {
 		}else{
 			client = new Client();
 		}
+		this.secret = secret;
+		this.key = key;
 	}
-	
+
 	public AExchange setKey(String key){
 		this.key = key;
 		return this;

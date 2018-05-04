@@ -8,27 +8,40 @@ public class ExchangeFactory {
 	private static final Logger LOGGER = LogManager.getLogger(ExchangeFactory.class);
 	
 	/**
-	 * 根据平台名称获取一个交易实例， 默认不走代理通道
-	 * @param plantform 平台名称，例如 exx.com, binance.com
-	 * @return 某个平台的实例
+	 * 获取一个交易所实例
+	 * @param plantform 交易所名称，例如 exx.com, binance.com
+	 * @return 一个新的交易所实例
 	 */
 	public static Exchange newInstance(String plantform){
 		return newInstance(plantform, false);
 	}
 	
 	/**
-	 * 根据平台名称获取一个交易所实例
-	 * @param plantform 平台名称
+	 * 获取一个交易所实例
+	 * @param plantform 平台名称，例如 exx.com, binance.com
 	 * @param needProxy 是否需要走代理标志
-	 * @return
+	 * @return 一个新的交易所实例
 	 */
 	public static Exchange newInstance(String plantform, Boolean needProxy){
+		return newInstance(plantform, null, null, needProxy);
+	}
+	
+	/**
+	 * 获取一个交易所实例
+	 * @param plantform 交易所名称，例如 exx.com, binance.com
+	 * @param key 交易所提供的key
+	 * @param secret 交易所提供的 secret
+	 * @param needProxy 是否需要走代理标志
+	 * @return 一个新的交易所实例
+	 */
+	public static Exchange newInstance(String plantform, 
+			String key, String secret, Boolean needProxy){
 		if (plantform.equals("exx.com")){
-			return new ExxExchange(needProxy);
+			return new ExxExchange(secret, key, needProxy);
 		}else if(plantform.equals("binance.com")){
 			return new BinanceExchange();
 		}else if (plantform.equals("zb.com")) {
-			return new ZbExchange(needProxy);
+			return new ZbExchange(secret, key, needProxy);
 		}else {
 			LOGGER.error("未找到 " + plantform + " 的交易所实例。");
 			return null;

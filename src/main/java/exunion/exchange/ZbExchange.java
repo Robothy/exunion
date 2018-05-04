@@ -69,10 +69,12 @@ public class ZbExchange extends AExchange {
 	
 	/**
 	 * 
-	 * @param needProxy true - 走代理 false - 不走代理
+	 * @param key 交易所供身份验证的key
+	 * @param secret 交易所供身份验证的secret
+	 * @param needProxy 是否需要走代理标志
 	 */
-	public ZbExchange(Boolean needProxy){
-		super(needProxy);
+	protected ZbExchange(String key, String secret, Boolean needProxy){
+		super(key, secret, needProxy);
 	}
 	
 	public AExchange setSecret(String secret){

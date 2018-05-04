@@ -71,8 +71,8 @@ public class ExxExchange extends AExchange {
 		}
 	}; 
 	
-	public ExxExchange(Boolean needProxy){
-		super(needProxy);
+	protected ExxExchange(String key, String secret, Boolean needProxy){
+		super(key, secret, needProxy);
 	}
 	
 	//获取账户信息
