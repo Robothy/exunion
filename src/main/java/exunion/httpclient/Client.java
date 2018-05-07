@@ -54,10 +54,17 @@ public class Client {
 				.setConnectionRequestTimeout(3000)
 				.build();
 		
-		this.client = clientBuilder
-				.setProxy(new HttpHost(proxyHost, port))
-				.setDefaultRequestConfig(requestConfig)
-				.build();
+		if(proxyHost != null){
+			this.client = clientBuilder
+					.setProxy(new HttpHost(proxyHost, port))
+					.setDefaultRequestConfig(requestConfig)
+					.build();
+		}else{
+			this.client = clientBuilder
+					.setDefaultRequestConfig(requestConfig)
+					.build();
+		}
+		
 	}
 	
 	/**
