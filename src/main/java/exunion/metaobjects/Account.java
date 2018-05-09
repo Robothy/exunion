@@ -1,7 +1,6 @@
 package exunion.metaobjects;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Map;
 
 public class Account extends Error {
