@@ -1,6 +1,8 @@
 package exunion.httpclient;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -105,11 +107,23 @@ public class Client {
 	public String post(String uri, Map<String, String> header){
 		HttpRequestBase post = new HttpPost(uri);
 		return this.httpBaseOperate(post, header);
-	}
+	} 
 	
 	private String httpBaseOperate(HttpRequestBase requestBase, Map<String, String> header){
 		HttpResponse response = null;
 		String responseBody = null;
+		
+		URI oldUri = requestBase.getURI();
+		URI newUri = null;
+		String ipAddress = null;
+		if((ipAddress = Hosts.getIpByDomain(oldUri.getHost())) != null){
+			try {
+				newUri = new URI(oldUri.toString().replace(oldUri.getHost(), ipAddress));
+				requestBase.setURI(newUri);
+			} catch (URISyntaxException e) {
+				LOGGER.error("uri 语法错误。", e);
+			}
+		}
 		
 		if (null != header){
 			for( Entry<String, String> entry : header.entrySet()){
