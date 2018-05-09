@@ -2,25 +2,26 @@ package exunion.metaobjects;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public class Account extends Error {
 
 	/**
 	 * 资产信息
 	 */
-	private List<Account.Balance> balances = null;
+	private Map<String, Account.Balance> balances = null;
 	
 	/**
 	 * 资产信息
 	 */
-	public List<Account.Balance> getBalances() {
+	public Map<String, Account.Balance> getBalances() {
 		return balances;
 	}
 
 	/**
 	 * 资产信息
 	 */
-	public void setBalances(List<Account.Balance> balances) {
+	public void setBalances(Map<String, Account.Balance> balances) {
 		this.balances = balances;
 	}
 

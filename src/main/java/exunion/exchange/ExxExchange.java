@@ -92,7 +92,7 @@ public class ExxExchange extends AExchange {
 		JSONObject jsonObject = JSON.parseObject(json);
 		JSONObject funds = jsonObject.getJSONObject("funds");
 		Account account = new Account();
-		List<Account.Balance> balances = new ArrayList<Account.Balance>();
+		Map<String, Account.Balance> balances = new HashMap<String, Account.Balance>();
 		for(String fundName : funds.keySet()){
 			Balance bal = new Balance();
 			bal.setAsset(fundName);
@@ -100,7 +100,7 @@ public class ExxExchange extends AExchange {
 			BigDecimal freeze = funds.getJSONObject(fundName).getBigDecimal("freeze");
 			bal.setFree(total.subtract(freeze));
 			bal.setLocked(freeze);
-			balances.add(bal);
+			balances.put(fundName, bal);
 		}
 		
 		account.setBalances(balances);

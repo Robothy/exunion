@@ -100,7 +100,7 @@ public class ZbExchange extends AExchange {
 		}
 		
 		Account account = new Account();
-		List<Account.Balance> balance = new ArrayList<Account.Balance>();
+		Map<String, Account.Balance> balances = new HashMap<String, Account.Balance>();
 		
 		try{
 			JSONObject jsonObject = JSON.parseObject(json);
@@ -109,14 +109,15 @@ public class ZbExchange extends AExchange {
 			for (int i=0; i<coins.size(); i++){
 				JSONObject coin = coins.getJSONObject(i);
 				Balance bal = new Balance();
-				bal.setAsset(coin.getString("enName"));
+				String currency = coin.getString("enName");
+				bal.setAsset(currency);
 				bal.setFree(new BigDecimal(coin.getString("available")));
 				bal.setLocked(new BigDecimal(coin.getString("freez")));
-				balance.add(bal);
+				balances.put(currency, bal);
 			}
-			account.setBalances(balance);
+			account.setBalances(balances);
 		}catch(JSONException e){
-			logger.warn(errorMessage + "解析 json 文本时出现异常。" + json, e);
+			logger.error(errorMessage + "解析 json 文本时出现异常。" + json, e);
 			return null;
 		}
 		
