@@ -91,6 +91,25 @@ public class Depth extends Error {
 	public void setTimestamp(Long timestamp) {
 	    this.timestamp = timestamp;
 	}
+	
+	public String toString(){
+		StringBuilder result = new StringBuilder();
+		result.append("asks: [");
+		for(PriceQuotation priceQuotation : asks){
+			result.append(priceQuotation.toString());
+			result.append(", ");
+		}
+		result.deleteCharAt(result.length() - 2);
+		
+		result.append("]\r\nbids: [");
+		for(PriceQuotation priceQuotation : bids){
+			result.append(priceQuotation.toString());
+			result.append(", ");
+		}
+		result.deleteCharAt(result.length() - 2);
+		result.append("]");
+		return result.toString();
+	}
 
 	/**
 	 * 报价
@@ -158,13 +177,9 @@ public class Depth extends Error {
 			this.quantity = quantity;
 		}
 		
+		public String toString(){
+			return "(" + this.price + ", " + this.quantity + ")";
+		}
+		
 	}	
 }
-
-
-
-
-
-
-
-
