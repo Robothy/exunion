@@ -141,7 +141,7 @@ public class ExxExchange extends AExchange {
 	    
 	    Collections.sort(asks, new Comparator<PriceQuotation>() {
 	    	public int compare(PriceQuotation o1, PriceQuotation o2) {
-	    		return o1.getPrice().compareTo(o2.getPrice());
+	    		return o2.getPrice().compareTo(o1.getPrice());
 	    	}
 	    });
 	    

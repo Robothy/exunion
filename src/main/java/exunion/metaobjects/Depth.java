@@ -93,7 +93,9 @@ public class Depth extends Error {
 	}
 	
 	public String toString(){
-		StringBuilder result = new StringBuilder();
+		StringBuilder result = new StringBuilder(currency);
+		result.append("\r\n|");
+		result.append("\r\n|--");
 		result.append("asks: [");
 		for(PriceQuotation priceQuotation : asks){
 			result.append(priceQuotation.toString());
@@ -101,7 +103,7 @@ public class Depth extends Error {
 		}
 		result.deleteCharAt(result.length() - 2);
 		
-		result.append("]\r\nbids: [");
+		result.append("]\r\n|--bids: [");
 		for(PriceQuotation priceQuotation : bids){
 			result.append(priceQuotation.toString());
 			result.append(", ");
