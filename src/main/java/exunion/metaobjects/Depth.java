@@ -97,17 +97,12 @@ public class Depth extends Error {
 		result.append("\r\n|");
 		result.append("\r\n|--");
 		result.append("asks: [");
-		for(PriceQuotation priceQuotation : asks){
-			result.append(priceQuotation.toString());
-			result.append(", ");
-		}
-		result.deleteCharAt(result.length() - 2);
 		
+		asks.stream().forEach(p->result.append(p).append(", "));
+		result.deleteCharAt(result.length() - 2);
 		result.append("]\r\n|--bids: [");
-		for(PriceQuotation priceQuotation : bids){
-			result.append(priceQuotation.toString());
-			result.append(", ");
-		}
+		bids.stream().forEach(e->result.append(e).append(", "));
+		
 		result.deleteCharAt(result.length() - 2);
 		result.append("]");
 		return result.toString();
