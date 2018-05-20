@@ -1,10 +1,15 @@
 package exunion.metaobjects;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Account extends Error {
 
+	public Account(){
+		this.balances = new HashMap<>();
+	}
+	
 	/**
 	 * 资产信息
 	 */
@@ -22,6 +27,21 @@ public class Account extends Error {
 	 */
 	public void setBalances(Map<String, Account.Balance> balances) {
 		this.balances = balances;
+	}
+	
+	/**
+	 * 获取特定资产
+	 */
+	public Balance getBalance(String currency){
+		return balances.get(currency);
+	}
+	
+	/**
+	 * 设置特定资产
+	 * @param balance
+	 */
+	public void putBalance(Balance balance){
+		balances.put(balance.getAsset(), balance);
 	}
 
 	public static class Balance{
@@ -82,6 +102,10 @@ public class Account extends Error {
 		public void setLocked(BigDecimal locked) {
 			this.locked = locked;
 		}
+		
+		public String toString(){
+			return "(currency=" + asset + ", free:" + free + ", lock=" + locked + ")";
+		}
+		
 	}
-	
 }
