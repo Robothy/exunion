@@ -139,24 +139,12 @@ public class ExxExchange extends AExchange {
 	    	asks.add(quotation);
 	    }
 	    
-	    Collections.sort(asks, new Comparator<PriceQuotation>() {
-	    	public int compare(PriceQuotation o1, PriceQuotation o2) {
-	    		return o2.getPrice().compareTo(o1.getPrice());
-	    	}
-	    });
-	    
 	    for(String[] dep: exxBids){
 	    	BigDecimal price = new BigDecimal(dep[0]);
 	    	BigDecimal quantity = new BigDecimal(dep[1]);
 	    	PriceQuotation quotation = new PriceQuotation(price, quantity);
 	    	bids.add(quotation);
 	    }
-	    
-	    Collections.sort(bids, new Comparator<PriceQuotation>() {
-			public int compare(PriceQuotation o1, PriceQuotation o2) {
-				return o2.getPrice().compareTo(o1.getPrice());
-			}
-		});
 	    
 	    depth.setAsks(asks);
 	    depth.setBids(bids);
