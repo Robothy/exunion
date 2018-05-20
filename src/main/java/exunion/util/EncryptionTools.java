@@ -44,6 +44,37 @@ public class EncryptionTools {
 		return SHA(data, "SHA-1");
 	}
 	
+	public static String Md532(String data){
+		
+		MessageDigest messageDigest = null;    
+		try    
+		{    
+			messageDigest = MessageDigest.getInstance("MD5");    
+			messageDigest.reset();    
+			messageDigest.update(data.getBytes("UTF-8"));    
+		} catch (NoSuchAlgorithmException e)    
+		{    
+			System.out.println("NoSuchAlgorithmException caught!");    
+			System.exit(-1);    
+		} catch (UnsupportedEncodingException e)    
+		{    
+			e.printStackTrace();    
+		}    
+		
+		byte[] byteArray = messageDigest.digest();    
+		
+		StringBuffer md5StrBuff = new StringBuffer();    
+		
+		for (int i = 0; i < byteArray.length; i++)    
+		{    
+			if (Integer.toHexString(0xFF & byteArray[i]).length() == 1)    
+				md5StrBuff.append("0").append(Integer.toHexString(0xFF & byteArray[i]));    
+			else    
+				md5StrBuff.append(Integer.toHexString(0xFF & byteArray[i]));    
+		}    
+		return md5StrBuff.toString();    
+	}
+	
 	private static String SHA(String data, String algorithm){
 		MessageDigest messageDigest;
 		String encdeStr = "";
@@ -95,7 +126,13 @@ public class EncryptionTools {
 	
 	public static void main(String[] args){
 		//System.out.println(HmanSHA("6186ec9223b8f8e3fe28b5f5c831427ed99950a6", "accesskey=6d8f62fd-3086-46e3-a0ba-c66a929c24e2&method=getAccountInfo", "HmacMD5"));
-		System.out.println(SHA1("48939bbc-8d49-402b-b731-adadf2ea9628"));
+		//System.out.println(SHA1("48939bbc-8d49-402b-b731-adadf2ea9628"));
+		System.out.println(HmacMd5("wZYHnNS396a4F5OVviUHG3dBgGK1zPTyFRwnRYsJIYy40CerZKgsN4ECrd8KHDX6", "api_key=48e5e01ca50cc6ac722b6502d3cd938e&nonce=559120&timestamp=1520347559wZYHnNS396a4F5OVviUHG3dBgGK1zPTyFRwnRYsJIYy40CerZKgsN4ECrd8KHDX6"));
+		System.out.println(HmacMd5("wZYHnNS396a4F5OVviUHG3dBgGK1zPTyFRwnRYsJIYy40CerZKgsN4ECrd8KHDX6", "api_key=48e5e01ca50cc6ac722b6502d3cd938e&nonce=559120&timestamp=1520347559"));
+		System.out.println(HmacMd5("wZYHnNS396a4F5OVviUHG3dBgGK1zPTyFRwnRYsJIYy40CerZKgsN4ECrd8KHDX6", "api_key=48e5e01ca50cc6ac722b6502d3cd938e&nonce=559120&timestamp=1520347559wZYHnNS396a4F5OVviUHG3dBgGK1zPTyFRwnRYsJIYy40CerZKgsN4ECrd8KHDX6"));
+		System.out.println(HmacMd5("wZYHnNS396a4F5OVviUHG3dBgGK1zPTyFRwnRYsJIYy40CerZKgsN4ECrd8KHDX6", "api_key=48e5e01ca50cc6ac722b6502d3cd938e&nonce=559120&timestamp=1520347559"));
+		System.out.println(HmacMd5("wZYHnNS396a4F5OVviUHG3dBgGK1zPTyFRwnRYsJIYy40CerZKgsN4ECrd8KHDX6", "api_key=48e5e01ca50cc6ac722b6502d3cd938e&nonce=559120&timestamp=1520347559wZYHnNS396a4F5OVviUHG3dBgGK1zPTyFRwnRYsJIYy40CerZKgsN4ECrd8KHDX6"));
+		System.out.println(HmacMd5("wZYHnNS396a4F5OVviUHG3dBgGK1zPTyFRwnRYsJIYy40CerZKgsN4ECrd8KHDX6", "api_key=48e5e01ca50cc6ac722b6502d3cd938e&nonce=559120&timestamp=1520347559"));
 	}
 	
 	

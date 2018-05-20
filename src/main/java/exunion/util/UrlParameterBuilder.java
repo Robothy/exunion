@@ -74,4 +74,39 @@ public class UrlParameterBuilder {
 		return urlParameters.toString();
 	}
 	
+	/**
+	 * 
+	 * @param secret
+	 * @param signParamName
+	 * @param params
+	 * @return
+	 */
+	public static String buildUrlParamsWithMD5Sign(String signParamName, Map<String, String> params){
+		StringBuilder urlParameters = new StringBuilder();
+		String urlParams = MapToUrlParameter(params);
+		String cipher = EncryptionTools.Md532(urlParams);
+		urlParameters.append(urlParams)
+		.append("&").append(null==signParamName?"signature": signParamName).append("=").append(cipher);
+		return urlParameters.toString();
+	}
+	
+	/**
+	 * 
+	 * @param secret
+	 * @param suffix 拼接在待加密字符后面的字符串
+	 * @param signParamName
+	 * @param params
+	 * @return
+	 */
+	public static String buildUrlParamsWithMD532Sign(String suffix, String signParamName, Map<String, String> params){
+		StringBuilder urlParameters = new StringBuilder();
+		String urlParams = MapToUrlParameter(params);
+		String cipher = EncryptionTools.Md532(urlParams + suffix);
+		urlParameters.append(urlParams)
+		.append("&").append(null==signParamName?"signature": signParamName).append("=").append(cipher);
+		return urlParameters.toString();
+	}
+	
+	
+	
 }
