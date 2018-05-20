@@ -51,9 +51,9 @@ public class Client {
 	 */
 	public Client(String proxyHost, int port){
 		RequestConfig requestConfig = requestConfigBuilder
-				.setConnectTimeout(3000)
-				.setSocketTimeout(3000)
-				.setConnectionRequestTimeout(3000)
+				.setConnectTimeout(30000)
+				.setSocketTimeout(30000)
+				.setConnectionRequestTimeout(30000)
 				.build();
 		
 		if(proxyHost != null){
