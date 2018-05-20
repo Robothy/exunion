@@ -1,6 +1,8 @@
 package exunion.metaobjects;
 
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -74,6 +76,27 @@ public class Depth extends Error {
 	}
 	
 	/**
+	 * 交易所名称
+	 */
+	private String exchange = null;
+	
+	/**
+	 * 获取交易所名称
+	 * @return 交易所名称
+	 */
+	public String getExchange() {
+		return exchange;
+	}
+
+	/**
+	 * 设置交易所名称
+	 * @param exchange 交易锁名称
+	 */
+	public void setExchange(String exchange) {
+		this.exchange = exchange;
+	}
+
+	/**
 	 * 时间戳
 	 */
 	private Long timestamp = null;
@@ -93,7 +116,13 @@ public class Depth extends Error {
 	}
 	
 	public String toString(){
-		StringBuilder result = new StringBuilder(currency);
+		StringBuilder result = new StringBuilder();
+		result.append("\r\n");
+		result.append(exchange);
+		result.append(" ");
+		result.append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(timestamp * 1000)));
+		result.append(" ");
+		result.append(currency);
 		result.append("\r\n|");
 		result.append("\r\n|--");
 		result.append("asks: [");
