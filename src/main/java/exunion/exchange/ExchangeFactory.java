@@ -42,7 +42,10 @@ public class ExchangeFactory {
 			return new BinanceExchange();
 		}else if (plantform.equals("zb.com")) {
 			return new ZbExchange(key, secret, needProxy);
-		}else {
+		}else if(plantform.equals("bit-z.com") || plantform.equals("bit-z.pro")){
+			return new BitZExchange(key, secret, needProxy);
+		}
+		else {
 			LOGGER.error("未找到 " + plantform + " 的交易所实例。");
 			return null;
 		}
