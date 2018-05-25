@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,7 +21,6 @@ import exunion.metaobjects.OrderSide;
 import exunion.metaobjects.Ticker;
 import exunion.metaobjects.Account.Balance;
 import exunion.standardize.Standardizable;
-import exunion.util.Test;
 import exunion.util.UrlParameterBuilder;
 
 public class BitZExchange extends AExchange {
@@ -139,7 +137,7 @@ public class BitZExchange extends AExchange {
 		depth.setBids(bids);
 		depth.setExchange(PLANTFORM);
 		depth.setCurrency(currency);
-		depth.setTimestamp(jsonObject.getLong("date"));
+		depth.setTimestamp(jsonObject.getLong("date") * 1000);
 		return depth;
 	}
 	
@@ -157,23 +155,6 @@ public class BitZExchange extends AExchange {
 
 	@Override
 	public Order getOrder(String currency, String orderId) {
-		Map<String, String> params = new HashMap<>();
-		params.put("api_key", key);
-		params.put("coin", currencyStandardizer.localize(currency));
-		params.put("stimestamp", new Long(System.currentTimeMillis()/1000).toString());
-		params.put("nonce", nonce());
-		String urlParams = UrlParameterBuilder.buildUrlParamsWithMD532Sign(secret, "sign", params);
-		String json = client.get(serverHost + "/api_v1/openOrders?" + urlParams);
-		if(null == json){
-			logger.error("获取订单[currency={}, orderId={}]时服务器{}无数据返回。", currency, orderId, PLANTFORM);
-			return null;
-		}
-		
-		if(!json.contains("Success")){
-			logger.error("获取订单[currency={}, orderId={}]时服务器{}返回错误信息: {}", currency, orderId, PLANTFORM, json);
-			return null;
-		}
-		
 		return null;
 	}
 
@@ -185,7 +166,24 @@ public class BitZExchange extends AExchange {
 
 	@Override
 	public List<Order> getOpenOrders(String currency) {
-		// TODO Auto-generated method stub
+		Map<String, String> params = new HashMap<>();
+		params.put("api_key", key);
+		params.put("coin", currencyStandardizer.localize(currency));
+		params.put("stimestamp", new Long(System.currentTimeMillis()/1000).toString());
+		params.put("nonce", nonce());
+		String urlParams = UrlParameterBuilder.buildUrlParamsWithMD532Sign(secret, "sign", params);
+		System.out.println(serverHost + "/api_v1/openOrders?" + urlParams);
+		String json = client.post(serverHost + "/api_v1/openOrders?" + urlParams);
+		if(null == json){
+			logger.error("获取进行中订单currency={}时服务器{}无数据返回。", currency, PLANTFORM);
+			return null;
+		}
+		
+		if(!json.contains("Success")){
+			logger.error("获取进行中订单currency={}时服务器{}返回错误信息: {}", currency, PLANTFORM, json);
+			return null;
+		}
+		
 		return null;
 	}
 

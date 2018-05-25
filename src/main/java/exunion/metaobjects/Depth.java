@@ -120,7 +120,7 @@ public class Depth extends Error {
 		result.append("\r\n");
 		result.append(exchange);
 		result.append(" ");
-		result.append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(timestamp * 1000)));
+		result.append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(timestamp)));
 		result.append(" ");
 		result.append(currency);
 		result.append("\r\n|");
