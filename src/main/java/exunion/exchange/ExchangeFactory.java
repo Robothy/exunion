@@ -44,6 +44,8 @@ public class ExchangeFactory {
 			return new ZbExchange(key, secret, needProxy);
 		}else if(plantform.equals("bit-z.com") || plantform.equals("bit-z.pro")){
 			return new BitZExchange(key, secret, needProxy);
+		}else if(plantform.equals("gate.io")){
+			return new GateExchange(key, secret, needProxy);
 		}
 		else {
 			LOGGER.error("未找到 " + plantform + " 的交易所实例。");
