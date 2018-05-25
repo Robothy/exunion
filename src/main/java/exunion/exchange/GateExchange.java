@@ -20,6 +20,7 @@ import exunion.metaobjects.Ticker;
 import exunion.metaobjects.Account.Balance;
 import exunion.metaobjects.Depth.PriceQuotation;
 import exunion.standardize.Standardizable;
+import exunion.util.EncryptionTools;
 
 public class GateExchange extends AExchange {
 
@@ -47,7 +48,41 @@ public class GateExchange extends AExchange {
 	@Override
 	public Account getAccount() {
 		
-		return null;
+		Map<String, String> header = new HashMap<>();
+		header.put("Content-Type", "application/x-www-form-urlencoded");
+		header.put("Key", key);
+		header.put("Sign", EncryptionTools.HmacSHA512(secret, ""));
+		String json = client.post("https://api.gateio.io/api2/1/private/balances", header);
+		if(null == json){
+			LOGGER.error("从{}服务器获取账户余额时无数据返回。", EXCHANGE_NAME);
+			return null;
+		}
+		
+		JSONObject jsonObject = JSON.parseObject(json);
+		if(!"true".equals(jsonObject.get("result"))){
+			LOGGER.error("获取账户信息时{}服务器返回错误信息: {}", EXCHANGE_NAME, json);
+			return null;
+		}
+		
+		Account account = new Account();
+		Map<String, Balance> balances = new HashMap<>();
+		JSONObject available = jsonObject.getJSONObject("available");
+		available.keySet()
+		.parallelStream()
+		.forEach(e ->{
+			Balance balance = new Balance();
+			balance.setAsset(e);
+			balance.setFree(available.getBigDecimal(e));
+			balances.put(e, new Balance());
+		});
+		
+		JSONObject locked = jsonObject.getJSONObject("locked");
+		locked.keySet()
+		.parallelStream()
+		.forEach(e -> balances.get(e).setLocked(locked.getBigDecimal(e)));
+		
+		account.setBalances(balances);
+		return account;
 	}
 
 	@Override
