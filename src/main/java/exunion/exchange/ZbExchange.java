@@ -156,6 +156,7 @@ public class ZbExchange extends AExchange {
 			logger.warn(errorMessage + "解析json文本时出现异常。" + json, e);
 			return null;
 		}
+		depth.setExchange(PLANTFORM);
 		depth.setCurrency(currency);
 		return depth;
 	}

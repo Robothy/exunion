@@ -2,8 +2,6 @@ package exunion.exchange;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -150,7 +148,7 @@ public class ExxExchange extends AExchange {
 	    depth.setBids(bids);
 	    depth.setCurrency(currency);
 	    depth.setTimestamp(exxDepth.getLong("timestamp"));
-	    
+	    depth.setExchange(PLANTFORM);
 	    return depth;
 	}
 
