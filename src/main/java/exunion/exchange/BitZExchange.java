@@ -183,7 +183,6 @@ public class BitZExchange extends AExchange {
 			logger.error("获取进行中订单currency={}时服务器{}返回错误信息: {}", currency, PLANTFORM, json);
 			return null;
 		}
-		
 		return null;
 	}
 
@@ -197,9 +196,18 @@ public class BitZExchange extends AExchange {
 	public Order order(String side, String currency, BigDecimal quantity, BigDecimal price) {
 		Map<String, String> params = new HashMap<>();
 		params.put("api_key", key);
-		params.put("tim&stimestamp", new Long(System.currentTimeMillis()/1000).toString());
+		params.put("timestamp", new Long(System.currentTimeMillis()/1000).toString());
 		params.put("nonce", nonce());
 		params.put("type", orderSideStandizer.localize(side));
+		params.put("price", price.toString());
+		params.put("number", quantity.toString());
+		params.put("coin", currencyStandardizer.localize(currency));
+		params.put("tradepwd", "nklfx1");
+		String urlParams = UrlParameterBuilder.buildUrlParamsWithMD532Sign(secret, "sign", params);
+		System.out.println("https://www.bit-z.com/api_v1/tradeAdd?" + urlParams);
+		String json = client.get("https://www.bit-z.com/api_v1/tradeAdd?" + urlParams);
+		
+		System.out.println(json);
 		
 		return null;
 	}
