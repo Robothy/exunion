@@ -125,7 +125,7 @@ public class GateExchange extends AExchange {
 		depth.setBids(bids);
 		depth.setExchange(EXCHANGE_NAME);
 		depth.setCurrency(currency);
-		depth.setTimestamp((System.currentTimeMillis() - new Long(jsonObject.getString("elapsed").replace("ms", "")))/1000);
+		depth.setTimestamp(System.currentTimeMillis() - new Long(jsonObject.getString("elapsed").replace("ms", "")));
 		return depth;
 	}
 
