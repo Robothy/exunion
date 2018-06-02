@@ -94,7 +94,7 @@ public class ZbExchange extends AExchange {
 			return null;
 		}
 		
-		if( json.contains("message")){
+		if( json.contains("code") || json.contains("message") || json.contains("error") ){
 			logger.warn(errorMessage + "服务器返回错误信息：" + json);
 			return null;
 		}
@@ -138,7 +138,7 @@ public class ZbExchange extends AExchange {
 			return null;
 		}
 		
-		if( json.contains("code") || json.contains("message") ){
+		if( json.contains("code") || json.contains("message") || json.contains("error") ){
 			logger.error(errorMessage + "服务器返回错误信息：" + json);
 			return null;
 		}
@@ -185,7 +185,7 @@ public class ZbExchange extends AExchange {
 			return null;
 		}
 		
-		if(json.contains("code") || json.contains("message")){
+		if( json.contains("code") || json.contains("message") || json.contains("error") ){
 			logger.warn(errorMessage + "服务器返回错误信息：" + json );
 			return null;
 		}
@@ -232,7 +232,7 @@ public class ZbExchange extends AExchange {
 			return null;
 		}
 		
-		if(json.contains("code") || json.contains("message")){
+		if( json.contains("code") || json.contains("message") || json.contains("error") ){
 			logger.warn(errorMessage + "服务器返回错误信息：" + json);
 			return null;
 		}
