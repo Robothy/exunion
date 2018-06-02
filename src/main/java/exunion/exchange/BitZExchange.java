@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPObject;
 
 import exunion.metaobjects.Account;
 import exunion.metaobjects.Depth;
@@ -21,6 +23,7 @@ import exunion.metaobjects.OrderSide;
 import exunion.metaobjects.Ticker;
 import exunion.metaobjects.Account.Balance;
 import exunion.standardize.Standardizable;
+import exunion.util.EncryptionTools;
 import exunion.util.UrlParameterBuilder;
 
 public class BitZExchange extends AExchange {
@@ -169,11 +172,11 @@ public class BitZExchange extends AExchange {
 		Map<String, String> params = new HashMap<>();
 		params.put("api_key", key);
 		params.put("coin", currencyStandardizer.localize(currency));
-		params.put("stimestamp", new Long(System.currentTimeMillis()/1000).toString());
+		params.put("timestamp", new Long(System.currentTimeMillis()/1000).toString());
 		params.put("nonce", nonce());
 		String urlParams = UrlParameterBuilder.buildUrlParamsWithMD532Sign(secret, "sign", params);
-		System.out.println(serverHost + "/api_v1/openOrders?" + urlParams);
-		String json = client.post(serverHost + "/api_v1/openOrders?" + urlParams);
+		params.put("sign", urlParams.substring(urlParams.length() - 32, urlParams.length()));
+		String json = client.post(serverHost + "/api_v1/openOrders",null, params);
 		if(null == json){
 			logger.error("获取进行中订单currency={}时服务器{}无数据返回。", currency, PLANTFORM);
 			return null;
@@ -183,7 +186,24 @@ public class BitZExchange extends AExchange {
 			logger.error("获取进行中订单currency={}时服务器{}返回错误信息: {}", currency, PLANTFORM, json);
 			return null;
 		}
-		return null;
+		
+		return JSON.parseObject(json)
+				.getJSONArray("data")
+				.parallelStream()
+				.map(object -> {
+					Order order = new Order();	
+					if(object instanceof JSONObject){
+						JSONObject jsonObject = (JSONObject)object;
+						order.setCurrency(currency);
+						order.setOrderId(jsonObject.getString(""));
+						order.setPrice(new BigDecimal(jsonObject.getString("price")));
+						order.setQuantity(new BigDecimal(jsonObject.getString("number")));
+						order.setTradeQuantity(new BigDecimal(jsonObject.getString("numberover")));
+						order.setSide("sale".equals(jsonObject.getString("flag")) ? "SELL" : "BUY");
+						order.setStatus("NEW");
+					}
+					return order;})
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -204,12 +224,28 @@ public class BitZExchange extends AExchange {
 		params.put("coin", currencyStandardizer.localize(currency));
 		params.put("tradepwd", "nklfx1");
 		String urlParams = UrlParameterBuilder.buildUrlParamsWithMD532Sign(secret, "sign", params);
-		System.out.println("https://www.bit-z.com/api_v1/tradeAdd?" + urlParams);
-		String json = client.get("https://www.bit-z.com/api_v1/tradeAdd?" + urlParams);
+		params.put("sign", urlParams.subSequence(urlParams.length() - 32, urlParams.length()).toString());
+		String json = client.post("https://www.bit-z.com/api_v1/tradeAdd", null, params);
 		
-		System.out.println(json);
+		Order order = new Order();
+		order.setPrice(price);
+		order.setQuantity(quantity);
+		order.setCurrency(currency);
+		order.setSide(side);
 		
-		return null;
+		if(null == json){
+			logger.error("下单{}时{}服务器无数据返回。", order, exchange);
+			return null;
+		}
+		JSONObject jsonObject = JSON.parseObject(json);
+		
+		if(!"Success".equals(jsonObject.getString("msg"))){
+			logger.error("下单{}时{}服务器返回错误信息：{}", order, exchange, json);
+			return null;
+		}
+		
+		order.setOrderId(jsonObject.getJSONObject("data").getString("id"));
+		return order;
 	}
 
 	@Override
