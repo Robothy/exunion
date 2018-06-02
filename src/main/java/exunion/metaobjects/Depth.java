@@ -26,7 +26,7 @@ public class Depth extends Error {
 	 */
 	public void setBids(List<PriceQuotation> bids) {
 		this.bids = bids;
-		Collections.sort(this.bids, new PriceQuotation().getComparator());
+		Collections.sort(this.bids, PriceQuotation.getComparator());
 	}
 	
 	/**
@@ -51,7 +51,7 @@ public class Depth extends Error {
 	 */
 	public void setAsks(List<PriceQuotation> asks) {
 		this.asks = asks;
-		Collections.sort(this.asks, new PriceQuotation().getComparator());
+		Collections.sort(this.asks, PriceQuotation.getComparator());
 		Collections.reverse(this.asks);
 	}
 
@@ -133,7 +133,7 @@ public class Depth extends Error {
 		bids.stream().forEach(e->result.append(e).append(", "));
 		
 		result.deleteCharAt(result.length() - 2);
-		result.append("]");
+		result.append("]\r\n");
 		return result.toString();
 	}
 
@@ -144,18 +144,18 @@ public class Depth extends Error {
 	 */
 	public static class PriceQuotation{
 	    
-		private Comparator<PriceQuotation> comparator = new Comparator<Depth.PriceQuotation>() {
+		private static Comparator<PriceQuotation> comparator = new Comparator<Depth.PriceQuotation>() {
 			public int compare(PriceQuotation o1, PriceQuotation o2) {
-				return o1.getPrice().compareTo(o1.getPrice());
+				return o2.getPrice().compareTo(o1.getPrice());
 			}
 		};
 		
-	    public Comparator<PriceQuotation> getComparator() {
+	    public static Comparator<PriceQuotation> getComparator() {
 			return comparator;
 		}
 
 		public void setComparator(Comparator<PriceQuotation> comparator) {
-			this.comparator = comparator;
+			PriceQuotation.comparator = comparator;
 		}
 
 		public PriceQuotation(BigDecimal price, BigDecimal quantity){
@@ -204,7 +204,7 @@ public class Depth extends Error {
 		}
 		
 		public String toString(){
-			return "(" + this.price + ", " + this.quantity + ")";
+			return "(" + this.price.stripTrailingZeros() + ", " + this.quantity.stripTrailingZeros() + ")";
 		}
 		
 	}	
