@@ -158,7 +158,11 @@ public class BitZExchange extends AExchange {
 
 	@Override
 	public Order getOrder(String currency, String orderId) {
-		return null;
+		return getOpenOrders(currency)
+				.parallelStream()
+				.filter(e -> orderId.equals(e.getOrderId()))
+				.findFirst()
+				.get(); 
 	}
 
 	@Override
@@ -208,7 +212,28 @@ public class BitZExchange extends AExchange {
 
 	@Override
 	public List<Order> getHistoryOrders(String currency) {
-		// TODO Auto-generated method stub
+		Map<String, String> params = new HashMap<>();
+		params.put("api_key", key);
+		params.put("coin", currencyStandardizer.localize(currency));
+		params.put("timestamp", new Long(System.currentTimeMillis()/1000).toString());
+		params.put("nonce", nonce());
+		String requestUrl = serverHost + "/api_v1/orders?" + UrlParameterBuilder.buildUrlParamsWithMD532Sign(secret, "sign", params);
+		
+		String json = client.get(requestUrl);
+		if(null == json ){
+			logger.error("获取{}历史订单时{}服务器无数据返回。", currency, PLANTFORM);
+			return null;
+		}
+		
+		JSONObject jsonObject = JSON.parseObject(json);
+		String msg = jsonObject.getString("msg");
+		if(null == msg || !"Success".equalsIgnoreCase(msg)){
+			logger.error("获取{}历史订单时{}服务器返回错误信息：{}", currency, PLANTFORM, json);
+			return null;
+		}
+		
+		System.out.println(json);
+		
 		return null;
 	}
 
