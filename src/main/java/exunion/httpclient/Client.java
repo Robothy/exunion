@@ -21,6 +21,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -123,21 +124,35 @@ public class Client {
 	 * @return 服务器返回的文本结果
 	 */
 	public String post(String uri, Map<String, String> header, Map<String, String> form){
-		HttpPost post = new HttpPost(uri);
+		HttpEntity entity = null;
 		if(form != null){
 			List<NameValuePair> parameters = new ArrayList<>();
 			for(Entry< String, String> entry : form.entrySet()){
 				NameValuePair nvp = new BasicNameValuePair(entry.getKey(), entry.getValue());
 				parameters.add(nvp);
 			}
-			HttpEntity entity = null;
 			try {
 				entity = new UrlEncodedFormEntity(parameters, "UTF-8");
 			} catch (UnsupportedEncodingException e) {
 				LOGGER.error("构建 POST 请求实体时出现异常。", e);
 			}
-			post.setEntity(entity);
 		}
+		return this.post(uri, header, entity);
+	}
+	
+	public String post(String uri, Map<String, String> header, String data){
+		HttpEntity entity = null;
+		try {
+			entity =  new StringEntity(data);
+		} catch (UnsupportedEncodingException e) {
+			LOGGER.error("构建POST字符串实体是出错。", data);
+		}
+		return this.post(uri, header, entity);
+	}
+	
+	private String post(String uri, Map<String, String> header, HttpEntity entity){
+		HttpPost post = new HttpPost(uri);
+		post.setEntity(entity);
 		return this.httpBaseOperate(post, header);
 	}
 	
