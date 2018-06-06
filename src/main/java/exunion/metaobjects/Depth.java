@@ -204,7 +204,7 @@ public class Depth extends Error {
 		}
 		
 		public String toString(){
-			return "(" + this.price.stripTrailingZeros() + ", " + this.quantity.stripTrailingZeros() + ")";
+			return "(" + this.price.stripTrailingZeros().toString() + ", " + this.quantity.stripTrailingZeros().toPlainString() + ")";
 		}
 		
 	}	
