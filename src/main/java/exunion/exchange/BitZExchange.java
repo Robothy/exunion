@@ -13,17 +13,16 @@ import org.apache.logging.log4j.Logger;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.JSONPObject;
 
 import exunion.metaobjects.Account;
 import exunion.metaobjects.Depth;
 import exunion.metaobjects.Depth.PriceQuotation;
 import exunion.metaobjects.Order;
 import exunion.metaobjects.OrderSide;
+import exunion.metaobjects.OrderStatus;
 import exunion.metaobjects.Ticker;
 import exunion.metaobjects.Account.Balance;
 import exunion.standardize.Standardizable;
-import exunion.util.EncryptionTools;
 import exunion.util.UrlParameterBuilder;
 
 public class BitZExchange extends AExchange {
@@ -158,11 +157,28 @@ public class BitZExchange extends AExchange {
 
 	@Override
 	public Order getOrder(String currency, String orderId) {
-		return getOpenOrders(currency)
-				.parallelStream()
-				.filter(e -> orderId.equals(e.getOrderId()))
-				.findFirst()
-				.get(); 
+		
+		List<Order> openOrders = getOpenOrders(currency);
+		// 获取进行中的单时出错
+		if(null == openOrders){
+			return null;
+		}
+		
+		Long found = openOrders.parallelStream()
+		.filter(order -> orderId.equals(order.getOrderId()) )
+		.count();
+		
+		Order order = new Order();
+		order.setCurrency(currency);
+		order.setOrderId(orderId);
+		
+		// 没有找到, 表示该单已经完成了
+		if(found == 0){
+			order.setStatus(OrderStatus.FILLED);
+		}else{
+			order.setStatus(OrderStatus.NEW);
+		}
+		return order; 
 	}
 
 	@Override
@@ -199,7 +215,7 @@ public class BitZExchange extends AExchange {
 					if(object instanceof JSONObject){
 						JSONObject jsonObject = (JSONObject)object;
 						order.setCurrency(currency);
-						order.setOrderId(jsonObject.getString(""));
+						order.setOrderId(jsonObject.getString("id"));
 						order.setPrice(new BigDecimal(jsonObject.getString("price")));
 						order.setQuantity(new BigDecimal(jsonObject.getString("number")));
 						order.setTradeQuantity(new BigDecimal(jsonObject.getString("numberover")));
