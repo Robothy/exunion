@@ -10,6 +10,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Hex;
 
+import com.sun.javafx.image.impl.BaseByteToIntConverter;
+
 public class EncryptionTools {
 	
 	/**
@@ -20,6 +22,10 @@ public class EncryptionTools {
 	 */
 	public static String HmacSHA256(String secret, String data){
 		return HmanSHA(secret, data, "HmacSHA256");
+	}
+	
+	public static byte[] HmacSHA256Hex(String secret, String data){
+		return HmanSHAHex(secret, data, "HmacSHA256");
 	}
 	
 	/**
@@ -91,9 +97,12 @@ public class EncryptionTools {
 	}
 	
 	private static String HmanSHA(String secret, String data, String algorithm){
-
+		return Hex.encodeHexString(HmanSHAHex(secret, data, algorithm));
+	}
+	
+	private static byte[] HmanSHAHex(String secret, String data, String algorithm){
 		
-		String cipher = ""; 
+		byte[] cipher = null; 
 		
 		Mac sha256_HMAC = null;
 		try {
@@ -102,18 +111,14 @@ public class EncryptionTools {
 			e.printStackTrace();
 		}
 		SecretKeySpec secret_key = null;
-		try {
-			secret_key = new SecretKeySpec(secret.getBytes("UTF-8"), algorithm);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		secret_key = new SecretKeySpec(secret.getBytes(), algorithm);
 		try {
 			sha256_HMAC.init(secret_key);
 		} catch (InvalidKeyException e) {
 			e.printStackTrace();
 		}
 		try {
-			cipher = Hex.encodeHexString(sha256_HMAC.doFinal(data.getBytes("UTF-8")));
+			cipher = sha256_HMAC.doFinal(data.getBytes("UTF-8"));
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
@@ -123,6 +128,8 @@ public class EncryptionTools {
 		return cipher;
 	
 	}
+	
+	
 	
 	public static void main(String[] args){
 		//System.out.println(HmanSHA("6186ec9223b8f8e3fe28b5f5c831427ed99950a6", "accesskey=6d8f62fd-3086-46e3-a0ba-c66a929c24e2&method=getAccountInfo", "HmacMD5"));
