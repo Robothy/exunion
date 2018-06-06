@@ -1,12 +1,6 @@
 package exunion.util;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
-
-import javax.print.attribute.standard.RequestingUserName;
 
 /**
  * 
@@ -15,15 +9,12 @@ import javax.print.attribute.standard.RequestingUserName;
  */
 public final class GetUTCTimeUtil {
 
-    private static DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss") ;
-
     /**
      * 得到UTC时间，类型为字符串，格式为"yyyy-MM-dd HH:mm"<br />
      * 如果获取失败，返回null
      * @return
      */
     public static Date getUTCTime() {
-        StringBuffer UTCTimeBuffer = new StringBuffer();
         // 1、取得本地时间：
         Calendar cal = Calendar.getInstance() ;
         // 2、取得时间偏移量：
@@ -34,11 +25,5 @@ public final class GetUTCTimeUtil {
         cal.add(java.util.Calendar.MILLISECOND, -(zoneOffset + dstOffset));
         return cal.getTime();
     }
-
-
-    public static void main(String[] args) { 
-        Date UTCTimeStr = getUTCTime() ;
-        System.out.println(UTCTimeStr); 
-    }
-
+    
 }
