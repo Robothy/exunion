@@ -116,7 +116,7 @@ public class ExxExchange extends AExchange {
 	    }
 	    
 	    //返回信息中含有错误码
-	    if(json.contains("code")){
+	    if(json.contains("code") || json.contains("error")){
 	    	logger.error(errorMessage + "服务器返回错误信息：" + json);
 	    	return null;
 	    }
@@ -163,7 +163,7 @@ public class ExxExchange extends AExchange {
 		}
 		
 		//返回信息中含有错误码
-	    if(json.contains("code")){
+	    if(json.contains("code") || json.contains("error")){
 	    	logger.error(errorMessage + "服务器返回错误信息：" + json);
 	    	return null;
 	    }
@@ -186,7 +186,7 @@ public class ExxExchange extends AExchange {
 		}
 		
 		//返回信息中含有错误码
-	    if(json.contains("code")){
+	    if(json.contains("code") || json.contains("error")){
 	    	logger.error(errorMessage + "服务器返回错误信息：" + json);
 	    	return null;
 	    }
@@ -228,7 +228,7 @@ public class ExxExchange extends AExchange {
 		}
 		
 		//返回信息中含有错误码
-	    if(json.contains("code")){
+	    if(json.contains("code") || json.contains("error")){
 	    	logger.error(errorMessage + "服务器返回错误信息：" + json);
 	    	return null;
 	    }
@@ -261,7 +261,7 @@ public class ExxExchange extends AExchange {
 			}
 			
 			//返回信息中含有错误码
-		    if(json.contains("code")){
+		    if(json.contains("code") || json.contains("error")){
 		    	logger.error(errorMessage + "服务器返回错误信息：" + json);
 		    	return null;
 		    }
