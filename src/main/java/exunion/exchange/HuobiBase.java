@@ -41,19 +41,19 @@ abstract class HuobiBase extends AExchange {
 		this.logger = logger;
 	}
 	
-	private String exchangeName = "huobi.pro";
+	private String exchangeName = "";
 	
 	protected void setExchangeName(String exchangeName){
 		this.exchangeName = exchangeName;
 	}
 	
-	private String urlBase = "https://api.hadax.com";
+	private String urlBase = "";
 	
 	protected void setUrlBase(String urlBase){
 		this.urlBase = urlBase;
 	}
 	
-	private String hostName = "api.hadax.com";
+	private String hostName = "";
 	
 	protected void setHostName(String hostName){
 		this.hostName = hostName;
