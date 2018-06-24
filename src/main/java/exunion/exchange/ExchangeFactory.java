@@ -46,6 +46,8 @@ public class ExchangeFactory {
 			return new BitZExchange(key, secret, needProxy);
 		}else if(plantform.equals("gate.io")){
 			return new GateExchange(key, secret, needProxy);
+		}else if(plantform.equals("hadax.com")){
+			return new HadaxExchange(key, secret, needProxy);
 		}else if(plantform.equals("huobi.pro")){
 			return new HuobiExchange(key, secret, needProxy);
 		}
