@@ -71,7 +71,7 @@ public class BitZExchange extends AExchange {
 		params.put("timestamp", new Long(System.currentTimeMillis()/1000).toString());
 		params.put("nonce", nonce());
 		String urlParams = UrlParameterBuilder.buildUrlParamsWithMD532Sign(secret,"sign", params);
-		String json = client.get("https://www.bit-z.com/api_v1/balances?" + urlParams);
+		String json = client.get(serverHost + "/api_v1/balances?" + urlParams);
 		if(null == json){
 			logger.error("{}服务器无数据返回。", this.getPlantformName());
 			return null;
@@ -102,7 +102,7 @@ public class BitZExchange extends AExchange {
 		Map<String, String> params = new HashMap<>();
 		params.put("coin", currencyStandardizer.localize(currency));
 		String urlParams = UrlParameterBuilder.MapToUrlParameter(params);
-		String json = client.get("https://www.bit-z.com/api_v1/depth?" + urlParams);
+		String json = client.get(serverHost + "/api_v1/depth?" + urlParams);
 		if(null == json ){
 			logger.error("{}服务器无数据返回。", PLANTFORM);
 			return null;
@@ -266,7 +266,7 @@ public class BitZExchange extends AExchange {
 		params.put("tradepwd", "nklfx1");
 		String urlParams = UrlParameterBuilder.buildUrlParamsWithMD532Sign(secret, "sign", params);
 		params.put("sign", urlParams.subSequence(urlParams.length() - 32, urlParams.length()).toString());
-		String json = client.post("https://www.bit-z.com/api_v1/tradeAdd", null, params);
+		String json = client.post(serverHost + "/api_v1/tradeAdd", null, params);
 		
 		Order order = new Order();
 		order.setPrice(price);
