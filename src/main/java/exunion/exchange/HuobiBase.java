@@ -393,7 +393,9 @@ abstract class HuobiBase extends AExchange {
 		.forEach(e -> {
 			if(e instanceof JSONObject){
 				JSONObject jsonObj = (JSONObject) e;
-				accountsId.add(jsonObj.getString("id"));
+				if("spot".equalsIgnoreCase(jsonObj.getString("type"))){
+					accountsId.add(jsonObj.getString("id"));
+				}
 			}
 		});
 		
