@@ -50,6 +50,10 @@ public class ExchangeFactory {
 			return new HadaxExchange(key, secret, needProxy);
 		}else if(plantform.equals("huobi.pro")){
 			return new HuobiExchange(key, secret, needProxy);
+		}else if(plantform.equals("vnbig.com")){
+			return new VnbigExchange(key, secret, needProxy);
+		}else if(plantform.equals("lbank.info")){
+			return new LBankExchange(key, secret, needProxy);
 		}
 		else {
 			LOGGER.error("未找到 " + plantform + " 的交易所实例。");
