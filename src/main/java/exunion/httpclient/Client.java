@@ -18,6 +18,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -67,6 +68,8 @@ public class Client {
 			this.client = clientBuilder
 					.setProxy(new HttpHost(proxyHost, port))
 					.setDefaultRequestConfig(requestConfig)
+					.setMaxConnTotal(5)
+					.setMaxConnPerRoute(1)
 					.build();
 		}else{
 			this.client = clientBuilder
@@ -94,6 +97,33 @@ public class Client {
 	public String get(String uri, Map<String, String> header){
 		HttpRequestBase requestBase = new HttpGet(uri);
 		return httpBaseOperate(requestBase, header);
+	}
+	
+	public String get(String uri, Map<String, String> header, String body){
+		HttpEntity entity = null;
+		try {
+			entity = new StringEntity(body);
+		} catch (UnsupportedEncodingException e) {
+			LOGGER.error("构建GET方法的字符串实体是出错。", e);
+		}
+		return this.get(uri, header, entity);
+	}
+	
+	private String get(String uri, Map<String, String> header, HttpEntity entity){
+		HttpEntityEnclosingRequestBase get = new HttpEntityEnclosingRequestBase() {
+			@Override
+			public String getMethod() {
+				return "GET";
+			}
+		};
+		
+		get.setEntity(entity);
+		try {
+			get.setURI(new URI(uri));
+		} catch (URISyntaxException e) {
+			LOGGER.error("URI格式错误。", e);
+		}
+		return this.httpBaseOperate(get, header);
 	}
 	
 	/**
@@ -182,8 +212,13 @@ public class Client {
 			response = this.client.execute(requestBase);
 		} catch (ClientProtocolException e) {
 			LOGGER.error("向服务发送请求时出现客户端协议异常。", e);
+			requestBase.releaseConnection();
 		} catch (IOException e) {
 			LOGGER.error("向服务器发送请求时出现IO异常。", e);
+			requestBase.releaseConnection();
+		} catch(Exception e){
+			LOGGER.error("向服务器发送请求时出现异常。", e);
+			requestBase.releaseConnection();			
 		}
 		
 		if(null != response){
@@ -199,6 +234,7 @@ public class Client {
 				}
 			}
 		}
+		requestBase.releaseConnection();
 		return responseBody;
 	}
 	
