@@ -23,7 +23,7 @@ public class UrlParameterBuilder {
 		
 		StringBuilder urlParameters = new StringBuilder();
 		
-		List<String> keyList = new ArrayList<String>(map.keySet());
+		List<String> keyList = new ArrayList<>(map.keySet());
 		Collections.sort(keyList);
 
 		for (String key : keyList){
@@ -44,7 +44,7 @@ public class UrlParameterBuilder {
 	 * the signature parameter at the end of all parameters.  
 	 * @param secret a key of HmacSHA256
 	 * @param signParamName the signature parameter name.
-	 * @param param the data.
+	 * @param params the data.
 	 * @return cipher
 	 */
 	public static String buildUrlParamsWithHmacSHA256Sign(String secret, String signParamName, Map<String, String> params){
