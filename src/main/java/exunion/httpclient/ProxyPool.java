@@ -1,5 +1,8 @@
 package exunion.httpclient;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +34,23 @@ public class ProxyPool {
 	
 	//静态初始化块，加载配置的代理服务器池
 	static{
-		ClassLoader classLoader = ProxyPool.class.getClassLoader();
-		
-		InputStream proxyFileStream = classLoader.getResourceAsStream(proxyFileName);
-		
+
+		File file = new File(proxyFileName);
+
+		InputStream proxyFileStream = null;
+
+		if(file.exists()){
+			try {
+				proxyFileStream = new FileInputStream(file);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}else {
+			ClassLoader classLoader = ProxyPool.class.getClassLoader();
+			classLoader.getResourceAsStream(proxyFileName);
+		}
+
+
 		if(null == proxyFileStream){
 			logger.info("加载代理服务器配置时未能找到配置文件 {}", proxyFileName);
 		}else{
