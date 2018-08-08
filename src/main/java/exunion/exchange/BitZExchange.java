@@ -45,8 +45,8 @@ public class BitZExchange extends AExchange {
 			return s.toLowerCase();
 		}
 	};
-	
-	Standardizable<String, String> orderSideStandizer = new Standardizable<String, String>() {
+
+	private Standardizable<String, String> orderSideStandizer = new Standardizable<String, String>() {
 
 		@Override
 		public String standardize(String l) {
@@ -60,7 +60,7 @@ public class BitZExchange extends AExchange {
 		
 	};
 	
-	public BitZExchange(String key, String secret, Boolean needProxy) {
+	BitZExchange(String key, String secret, Boolean needProxy) {
 		super(key, secret, needProxy);
 	}
 
@@ -156,29 +156,27 @@ public class BitZExchange extends AExchange {
 	}
 
 	@Override
-	public Order getOrder(String currency, String orderId) {
-		
-		List<Order> openOrders = getOpenOrders(currency);
+	public Order getOrder(String currency, String orderId) {List<Order> openOrders = getOpenOrders(currency);
 		// 获取进行中的单时出错
 		if(null == openOrders){
 			return null;
 		}
-		
+
 		Long found = openOrders.parallelStream()
-		.filter(order -> orderId.equals(order.getOrderId()) )
-		.count();
-		
+				.filter(order -> orderId.equals(order.getOrderId()) )
+				.count();
+
 		Order order = new Order();
 		order.setCurrency(currency);
 		order.setOrderId(orderId);
-		
+
 		// 没有找到, 表示该单已经完成了
 		if(found == 0){
 			order.setStatus(OrderStatus.FILLED);
 		}else{
 			order.setStatus(OrderStatus.NEW);
 		}
-		return order; 
+		return order;
 	}
 
 	@Override
