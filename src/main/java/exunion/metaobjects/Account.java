@@ -30,10 +30,17 @@ public class Account extends Error {
 	}
 	
 	/**
-	 * 获取特定资产
+	 * 获取特定资产，若资产不存在，则返回一个可用额为0，锁定额为0的Balance对象
 	 */
 	public Balance getBalance(String currency){
-		return balances.get(currency);
+		Balance balance = balances.get(currency);
+		if(null == balance){
+			balance = new Balance();
+			balance.setAsset(currency);
+			balance.setFree(BigDecimal.ZERO);
+			balance.setLocked(BigDecimal.ZERO);
+		}
+		return balance;
 	}
 	
 	/**
@@ -104,7 +111,7 @@ public class Account extends Error {
 		}
 		
 		public String toString(){
-			return "(currency=" + asset + ", free:" + free + ", lock=" + locked + ")";
+			return "(currency=" + asset + ", free:" + free.stripTrailingZeros().toPlainString() + ", lock=" + locked.stripTrailingZeros().toPlainString() + ")";
 		}
 		
 	}
