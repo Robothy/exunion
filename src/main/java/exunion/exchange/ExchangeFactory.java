@@ -44,7 +44,9 @@ public class ExchangeFactory {
 			return new ZbExchange(key, secret, needProxy);
 		}else if(plantform.equals("bit-z.com") || plantform.equals("bit-z.pro")){
 			return new BitZExchange(key, secret, needProxy);
-		}else if(plantform.equals("gate.io")){
+		}else if (plantform.equals("bit-z.com.v2")){
+			return new BitZv2Exchange(key, secret, needProxy);
+		} else if(plantform.equals("gate.io")){
 			return new GateExchange(key, secret, needProxy);
 		}else if(plantform.equals("hadax.com")){
 			return new HadaxExchange(key, secret, needProxy);
@@ -54,6 +56,8 @@ public class ExchangeFactory {
 			return new VnbigExchange(key, secret, needProxy);
 		}else if(plantform.equals("lbank.info")){
 			return new LBankExchange(key, secret, needProxy);
+		}else if(plantform.equals("fcoin.com")){
+			return new FCoinExchange(key, secret, needProxy);
 		}
 		else {
 			LOGGER.error("未找到 " + plantform + " 的交易所实例。");
