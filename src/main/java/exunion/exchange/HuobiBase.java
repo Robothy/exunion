@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import exunion.util.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,9 +30,6 @@ import exunion.metaobjects.Ticker;
 import exunion.metaobjects.Account.Balance;
 import exunion.metaobjects.Depth.PriceQuotation;
 import exunion.standardize.Standardizable;
-import exunion.util.EncryptionTools;
-import exunion.util.GetUTCTimeUtil;
-import exunion.util.UrlParameterBuilder;
 
 abstract class HuobiBase extends AExchange {
 
@@ -43,19 +41,19 @@ abstract class HuobiBase extends AExchange {
 	
 	private String exchangeName = "";
 	
-	protected void setExchangeName(String exchangeName){
+	void setExchangeName(String exchangeName){
 		this.exchangeName = exchangeName;
 	}
 	
 	private String urlBase = "";
 	
-	protected void setUrlBase(String urlBase){
+	void setUrlBase(String urlBase){
 		this.urlBase = urlBase;
 	}
 	
 	private String hostName = "";
 	
-	protected void setHostName(String hostName){
+	void setHostName(String hostName){
 		this.hostName = hostName;
 	}
 	
@@ -114,10 +112,12 @@ abstract class HuobiBase extends AExchange {
 			return s;
 		}
 	};
-	
+
+	private Sign sign;
 	
 	HuobiBase(String key, String secret, Boolean needProxy) {
 		super(key, secret, needProxy);
+		sign = new HmacSign(HmacSign.HmacAlgorithm.HmacSHA256, secret);
 	}
 	
 	
@@ -321,9 +321,9 @@ abstract class HuobiBase extends AExchange {
 		formData.put("symbol", currencyStandizer.localize(currency));
 		formData.put("type", orderSideStandizer.localize(side));
 		
-		String path = "/v1/hadax/order/orders/place";
-		String sign = sign("POST", hostName, path, params);
-		String requestUrl = urlBase + path + "?" + UrlParameterBuilder.MapToUrlParameter(params) + "&Signature=" + sign;
+		String path = "ETH_BTC".equals(currency) ? "/v1/order/orders/place" : "/v1/hadax/order/orders/place";
+		String sign = sign("POST", "ETH_BTC".equals(currency) ? "api.huobi.pro" : hostName, path, params);
+		String requestUrl = ("ETH_BTC".equals(currency) ? "https://api.huobi.pro" : urlBase) + path + "?" + UrlParameterBuilder.MapToUrlParameter(params) + "&Signature=" + sign;
 		header.put("Content-Type", "application/json");
 		params.put("Signature", sign);
 		String json = client.post(requestUrl, header, JSON.toJSONString(formData));
@@ -415,7 +415,8 @@ abstract class HuobiBase extends AExchange {
 		.append(UrlParameterBuilder.MapToUrlParameter(params)); 		
 		
 		
-		byte[] signByte = EncryptionTools.HmacSHA256Hex(secret, toBeEncodStr.toString());
+		//byte[] signByte = EncryptionTools.HmacSHA256Hex(secret, toBeEncodStr.toString());
+		byte[] signByte = sign.hexSign(toBeEncodStr.toString());
 		
 		String sign = null;
 		
