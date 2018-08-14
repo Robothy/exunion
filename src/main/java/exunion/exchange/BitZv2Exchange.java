@@ -212,7 +212,8 @@ public class BitZv2Exchange extends AExchange {
         order.setCreateDate(getTimestamp(jsonObject));
         order.setStatus(orderStatusStandizer.standardize(data.getString("status")));
         order.setTradeQuantity(data.getBigDecimal("numberDeal"));
-        order.setTradeMoney(order.getTradeQuantity().multiply(data.getBigDecimal("averagePrice")));
+        order.setTradeMoney(order.getTradeQuantity().multiply(data.getBigDecimal("price")));
+       // order.setTradeMoney(order.getTradeQuantity().multiply(data.getBigDecimal("averagePrice")));
         return order;
     }
 
@@ -298,7 +299,7 @@ public class BitZv2Exchange extends AExchange {
         params.put("price", price.toString());
         params.put("number", quantity.toString());
         params.put("symbol", currencyStandardizer.localize(currency));
-        params.put("tradePwd", "nklfx1");
+        params.put("tradePwd", "");
         String urlParams = UrlParameterBuilder.buildUrlParamsWithMD532Sign(secret, "sign", params);
         params.put("sign", urlParams.subSequence(urlParams.length() - 32, urlParams.length()).toString());
         String json = client.post(serverHost + "/Trade/addEntrustSheet", header, params);
