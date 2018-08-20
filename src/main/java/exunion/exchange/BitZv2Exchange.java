@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import exunion.util.Md5Sign;
+import exunion.util.Sign;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,11 +28,16 @@ import exunion.metaobjects.Account.Balance;
 import exunion.standardize.Standardizable;
 import exunion.util.UrlParameterBuilder;
 
+/**
+ * bitz v2版本API实现类
+ */
 public class BitZv2Exchange extends AExchange {
 
-    private static final String EXCHANGE_NAME = "bit-z.com";
+    private static final String exchangeName = "bit-z.com";
 
     private static final String serverHost = "https://apiv2.bitz.com";
+
+    private Sign sign;
 
     private static Map<String, String> header = new HashMap<>();
     static {
@@ -83,6 +90,7 @@ public class BitZv2Exchange extends AExchange {
 
     public BitZv2Exchange(String key, String secret, Boolean needProxy) {
         super(key, secret, needProxy);
+        sign = new Md5Sign();
     }
 
     @Override
@@ -91,10 +99,11 @@ public class BitZv2Exchange extends AExchange {
         params.put("apiKey", key);
         params.put("timeStamp", Long.toString(System.currentTimeMillis()/1000));
         params.put("nonce", nonce());
-        String urlParams = UrlParameterBuilder.buildUrlParamsWithMD532Sign(secret,"sign", params);
+        String toBeSignStr = UrlParameterBuilder.MapToUrlParameter(params);
+        String urlParams = toBeSignStr + "&sign=" + sign(toBeSignStr + secret);
         String json = client.get(serverHost + "/Assets/getUserAssets?" + urlParams, header);
         if(null == json){
-            logger.error("{}服务器无数据返回。", EXCHANGE_NAME);
+            logger.error("{}服务器无数据返回。", exchangeName);
             return null;
         }
 
@@ -103,7 +112,7 @@ public class BitZv2Exchange extends AExchange {
         Integer status = jsonObject.getInteger("status");
 
         if(null == status || 200!=status){
-            logger.error("{}服务器返回错误信息: {}", EXCHANGE_NAME, json);
+            logger.error("{}服务器返回错误信息: {}", exchangeName, json);
             return null;
         }
         Account account = new Account();
@@ -128,7 +137,7 @@ public class BitZv2Exchange extends AExchange {
         String urlParams = UrlParameterBuilder.MapToUrlParameter(params);
         String json = client.get(serverHost + "/Market/depth?" + urlParams);
         if(null == json ){
-            logger.error("{}服务器无数据返回。", EXCHANGE_NAME);
+            logger.error("{}服务器无数据返回。", exchangeName);
             return null;
         }
 
@@ -136,7 +145,7 @@ public class BitZv2Exchange extends AExchange {
 
         Integer status = oriObj.getInteger("status");
         if(null == status || 200!=status){
-            logger.error("{}服务器返回错误信息: {}", EXCHANGE_NAME, json);
+            logger.error("{}服务器返回错误信息: {}", exchangeName, json);
             return null;
         }
 
@@ -160,7 +169,7 @@ public class BitZv2Exchange extends AExchange {
 
         depth.setBids(parse.apply("bids"));
         depth.setAsks(parse.apply("asks"));
-        depth.setExchange(EXCHANGE_NAME);
+        depth.setExchange(exchangeName);
         depth.setCurrency(currency);
         depth.setTimestamp(getTimestamp(oriObj));
         return depth;
@@ -185,14 +194,13 @@ public class BitZv2Exchange extends AExchange {
         params.put("timeStamp", Long.toString(System.currentTimeMillis()/1000));
         params.put("nonce", nonce());
         params.put("entrustSheetId", orderId);
-
-        String urlParams = UrlParameterBuilder.buildUrlParamsWithMD532Sign(secret,"sign", params);
-        params.put("sign", urlParams.subSequence(urlParams.length() - 32, urlParams.length()).toString());
+        String sign = sign(UrlParameterBuilder.MapToUrlParameter(params) + secret);
+        params.put("sign", sign);
         String requestUrl = serverHost + "/Trade/getEntrustSheetInfo";
         String json = client.post(requestUrl, header, params);
 
         if(null == json){
-            logger.error("获取订单{}时{}服务器无数据返回。", orderId,EXCHANGE_NAME);
+            logger.error("获取订单{}时{}服务器无数据返回。", orderId,exchangeName);
             return null;
         }
 
@@ -201,7 +209,7 @@ public class BitZv2Exchange extends AExchange {
         Integer status = jsonObject.getInteger("status");
 
         if(null == status || 200!=status){
-            logger.error("获取订单{}时{}服务器返回错误信息: {}",orderId, EXCHANGE_NAME, json);
+            logger.error("获取订单{}时{}服务器返回错误信息: {}",orderId, exchangeName, json);
             return null;
         }
 
@@ -213,7 +221,7 @@ public class BitZv2Exchange extends AExchange {
         order.setStatus(orderStatusStandizer.standardize(data.getString("status")));
         order.setTradeQuantity(data.getBigDecimal("numberDeal"));
         order.setTradeMoney(order.getTradeQuantity().multiply(data.getBigDecimal("price")));
-       // order.setTradeMoney(order.getTradeQuantity().multiply(data.getBigDecimal("averagePrice")));
+        order.setExchangeName(exchangeName);
         return order;
     }
 
@@ -225,67 +233,11 @@ public class BitZv2Exchange extends AExchange {
 
     @Override
     public List<Order> getOpenOrders(String currency) {
-        Map<String, String> params = new HashMap<>();
-        params.put("api_key", key);
-        params.put("coin", currencyStandardizer.localize(currency));
-        params.put("timestamp", new Long(System.currentTimeMillis()/1000).toString());
-        params.put("nonce", nonce());
-        String urlParams = UrlParameterBuilder.buildUrlParamsWithMD532Sign(secret, "sign", params);
-        params.put("sign", urlParams.substring(urlParams.length() - 32, urlParams.length()));
-        String json = client.post(serverHost + "/api_v1/openOrders",null, params);
-        if(null == json){
-            logger.error("获取进行中订单currency={}时服务器{}无数据返回。", currency, EXCHANGE_NAME);
-            return null;
-        }
-
-        if(!json.contains("Success")){
-            logger.error("获取进行中订单currency={}时服务器{}返回错误信息: {}", currency, EXCHANGE_NAME, json);
-            return null;
-        }
-
-        return JSON.parseObject(json)
-                .getJSONArray("data")
-                .parallelStream()
-                .map(object -> {
-                    Order order = new Order();
-                    if(object instanceof JSONObject){
-                        JSONObject jsonObject = (JSONObject)object;
-                        order.setCurrency(currency);
-                        order.setOrderId(jsonObject.getString("id"));
-                        order.setPrice(new BigDecimal(jsonObject.getString("price")));
-                        order.setQuantity(new BigDecimal(jsonObject.getString("number")));
-                        order.setTradeQuantity(new BigDecimal(jsonObject.getString("numberover")));
-                        order.setSide("sale".equals(jsonObject.getString("flag")) ? "SELL" : "BUY");
-                        order.setStatus("NEW");
-                    }
-                    return order;})
-                .collect(Collectors.toList());
+        return null;
     }
 
     @Override
     public List<Order> getHistoryOrders(String currency) {
-        Map<String, String> params = new HashMap<>();
-        params.put("api_key", key);
-        params.put("coin", currencyStandardizer.localize(currency));
-        params.put("timestamp", new Long(System.currentTimeMillis()/1000).toString());
-        params.put("nonce", nonce());
-        String requestUrl = serverHost + "/api_v1/orders?" + UrlParameterBuilder.buildUrlParamsWithMD532Sign(secret, "sign", params);
-
-        String json = client.get(requestUrl);
-        if(null == json ){
-            logger.error("获取{}历史订单时{}服务器无数据返回。", currency, EXCHANGE_NAME);
-            return null;
-        }
-
-        JSONObject jsonObject = JSON.parseObject(json);
-        String msg = jsonObject.getString("msg");
-        if(null == msg || !"Success".equalsIgnoreCase(msg)){
-            logger.error("获取{}历史订单时{}服务器返回错误信息：{}", currency, EXCHANGE_NAME, json);
-            return null;
-        }
-
-        System.out.println(json);
-
         return null;
     }
 
@@ -300,8 +252,10 @@ public class BitZv2Exchange extends AExchange {
         params.put("number", quantity.toString());
         params.put("symbol", currencyStandardizer.localize(currency));
         params.put("tradePwd", "");
-        String urlParams = UrlParameterBuilder.buildUrlParamsWithMD532Sign(secret, "sign", params);
-        params.put("sign", urlParams.subSequence(urlParams.length() - 32, urlParams.length()).toString());
+
+        String toEncrStr = UrlParameterBuilder.MapToUrlParameter(params) + secret;
+        String sign = sign(toEncrStr);
+        params.put("sign", sign);
         String json = client.post(serverHost + "/Trade/addEntrustSheet", header, params);
 
         if(null == json){
@@ -313,7 +267,7 @@ public class BitZv2Exchange extends AExchange {
         Integer status = jsonObject.getInteger("status");
         String dataId = jsonObject.getJSONObject("data").getString("id");
         if(null == status || 200!=status || null == dataId){
-            logger.error("{}服务器返回错误信息: {}", EXCHANGE_NAME, json);
+            logger.error("{}服务器返回错误信息: {}", exchangeName, json);
             return null;
         }
 
@@ -324,6 +278,7 @@ public class BitZv2Exchange extends AExchange {
         order.setSide(side);
         order.setCreateDate(getTimestamp(jsonObject));
         order.setOrderId(dataId);
+        order.setExchangeName(exchangeName);
         return order;
     }
 
@@ -335,7 +290,7 @@ public class BitZv2Exchange extends AExchange {
 
     @Override
     public String getPlantformName() {
-        return EXCHANGE_NAME;
+        return exchangeName;
     }
 
 
@@ -345,6 +300,15 @@ public class BitZv2Exchange extends AExchange {
 
     private Long getTimestamp(JSONObject jsonObject){
         return new Long(jsonObject.getString("time") + jsonObject.getString("microtime").substring(2,5));
+    }
+
+    /**
+     * 生成MD5签名
+     * @param toBeSignStr 待签名字符串
+     * @return 签名结果
+     */
+    private String sign(String toBeSignStr){
+        return sign.strSign(toBeSignStr);
     }
 
 }
