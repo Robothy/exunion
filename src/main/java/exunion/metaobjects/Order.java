@@ -5,6 +5,27 @@ import java.math.BigDecimal;
 public class Order extends Error {
 
 	/**
+	 * 交易所
+	 */
+	private String exchangeName;
+
+	/**
+	 * 获取交易所名称
+	 * @return 交易所名称
+	 */
+	public String getExchangeName() {
+		return exchangeName;
+	}
+
+	/**
+	 * 设置交易所名称
+	 * @param exchangeName 交易所名称
+	 */
+	public void setExchangeName(String exchangeName) {
+		this.exchangeName = exchangeName;
+	}
+
+	/**
 	 * 订单状态
 	 */
 	private String status = null;
@@ -193,5 +214,8 @@ public class Order extends Error {
 	public void setCreateDate(Long createDate) {
 		this.createDate = createDate;
 	}
-	
+
+	public String toString(){
+		return "(exchangeName=" + exchangeName + ", currencyPair=" + currency + ", price=" + price.stripTrailingZeros().toPlainString() + ", quantity=" + quantity + ")";
+	}
 }

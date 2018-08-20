@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import exunion.util.*;
@@ -196,41 +197,28 @@ abstract class HuobiBase extends AExchange {
 			logger.error("获取{}深度信息时{}服务器返回错误信息:{}", currency, exchangeName, json);
 			return null;
 		}
-		
+
+		JSONObject tick = jsonObject.getJSONObject("tick");
+
 		Depth depth = new Depth();
+		Function<String, List<PriceQuotation>> parse = dep->{
+			List<PriceQuotation> result = new ArrayList<>();
+			tick.getJSONArray(dep)
+					.parallelStream()
+					.forEach(e->{
+						if(e instanceof JSONArray){
+							JSONArray pq = (JSONArray) e;
+							PriceQuotation priceQuotation = new PriceQuotation();
+							priceQuotation.setPrice(new BigDecimal(pq.get(0).toString()));
+							priceQuotation.setQuantity(new BigDecimal(pq.get(1).toString()));
+							result.add(priceQuotation);
+						}
+					});
+			return result;
+		};
 		
-		List<PriceQuotation> asks = jsonObject.getJSONObject("tick")
-		.getJSONArray("asks")
-		.parallelStream()
-		.map(e ->{
-			if(e instanceof JSONArray){
-				JSONArray pq = (JSONArray) e;
-				PriceQuotation priceQuotation = new PriceQuotation();
-				priceQuotation.setPrice(new BigDecimal(pq.get(0).toString()));
-				priceQuotation.setQuantity(new BigDecimal(pq.get(1).toString()));
-				return priceQuotation;
-			}
-			return null;
-		})
-		.collect(Collectors.toList());
-		
-		List<PriceQuotation> bids = jsonObject.getJSONObject("tick")
-				.getJSONArray("bids")
-				.parallelStream()
-				.map(e ->{
-					if(e instanceof JSONArray){
-						JSONArray pq = (JSONArray) e;
-						PriceQuotation priceQuotation = new PriceQuotation();
-						priceQuotation.setPrice(new BigDecimal(pq.get(0).toString()));
-						priceQuotation.setQuantity(new BigDecimal(pq.get(1).toString()));
-						return priceQuotation;
-					}
-					return null;
-				})
-				.collect(Collectors.toList());
-		
-		depth.setAsks(asks);
-		depth.setBids(bids);
+		depth.setAsks(parse.apply("asks"));
+		depth.setBids(parse.apply("bids"));
 		depth.setCurrency(currency);
 		depth.setExchange(exchangeName);
 		depth.setTimestamp(jsonObject.getLong("ts"));
@@ -282,6 +270,7 @@ abstract class HuobiBase extends AExchange {
 		order.setTradeQuantity(jsonObject.getBigDecimal("field-amount"));
 		order.setTradeMoney(jsonObject.getBigDecimal("field-cash-amount"));
 		order.setStatus(orderStatusStandizer.standardize(jsonObject.getString("state")));
+		order.setExchangeName(exchangeName);
 		return order;
 	}
 
@@ -348,7 +337,7 @@ abstract class HuobiBase extends AExchange {
 		order.setStatus(OrderStatus.NEW);
 		order.setOrderId(jsonObject.getString("data"));
 		order.setCreateDate(System.currentTimeMillis());
-		
+		order.setExchangeName(exchangeName);
 		return order;
 	}
 

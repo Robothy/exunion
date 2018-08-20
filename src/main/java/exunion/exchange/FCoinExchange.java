@@ -189,9 +189,6 @@ public class FCoinExchange extends AExchange {
         String method = "GET";
         String path = "/v2/orders/" + orderId;
 
-        //Map<String, String> params = new HashMap<>();
-        //params.put("order_id", orderId);
-
         String json = client.get(host + path, signedHeader(method, path, null));
 
         if(null == json){
@@ -218,6 +215,7 @@ public class FCoinExchange extends AExchange {
         order.setTradeQuantity(data.getBigDecimal("filled_amount"));
         order.setTradeMoney(data.getBigDecimal("executed_value"));
         order.setStatus(orderStatusStandizer.standardize(data.getString("state")));
+        order.setExchangeName(exchangeName);
         return order;
     }
 
@@ -275,6 +273,7 @@ public class FCoinExchange extends AExchange {
         order.setQuantity(quantity);
         order.setCreateDate(System.currentTimeMillis());
         order.setType("LIMIT");
+        order.setExchangeName(exchangeName);
         return order;
     }
 
