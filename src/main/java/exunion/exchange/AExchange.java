@@ -40,7 +40,7 @@ public abstract class AExchange implements Exchange {
 		if(needProxy){
 			if(ProxyPool.hasNext()){
 				ProxyServer proxyServer = ProxyPool.next();			
-				client = new Client(proxyServer.getIpAddress(), proxyServer.getPost());
+				client = new Client(proxyServer.getIpAddress(), proxyServer.getPort());
 			}else{
 				logger.warn("获取代理服务器信息失败，没有代理服务器的配置信息。");
 				client = new Client();

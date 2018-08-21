@@ -22,13 +22,13 @@ public class ProxyPool {
 	private ProxyPool(){}
 	
 	// 代理服务器配置文件名称
-	private static String proxyFileName = "proxy.properties";
+	private static String proxyFileName = "httpProxy.properties";
 	
 	private static final Logger logger = LogManager.getLogger(ProxyPool.class);
 	
 	// 配置文件中的代理服务器
-	private static List<ProxyServer> proxies = new ArrayList<ProxyServer>();  
-	
+	private static List<ProxyServer> proxies = new ArrayList<>();
+
 	// 当前索引号
 	private static int idx = 0;
 	
@@ -115,7 +115,7 @@ public class ProxyPool {
 			return ipAddress;
 		}
 		
-		public Integer getPost(){
+		public Integer getPort(){
 			return port;
 		}
 		
