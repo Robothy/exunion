@@ -64,18 +64,12 @@ public class Client {
                 .build();
 
         if (proxyHost != null) {
-            this.client = clientBuilder
-                    .setProxy(new HttpHost(proxyHost, port))
-                    .setDefaultRequestConfig(requestConfig)
-                    .setMaxConnTotal(5)
-                    .setMaxConnPerRoute(1)
-                    .build();
-        } else {
-            this.client = clientBuilder
-                    .setDefaultRequestConfig(requestConfig)
-                    .build();
+            clientBuilder.setProxy(new HttpHost(proxyHost, port));
         }
 
+        this.client = clientBuilder
+                .setDefaultRequestConfig(requestConfig)
+                .build();
     }
 
     /**
@@ -111,6 +105,7 @@ public class Client {
     }
 
     private String get(String uri, Map<String, String> header, HttpEntity entity) {
+
         HttpEntityEnclosingRequestBase get = new HttpEntityEnclosingRequestBase() {
             @Override
             public String getMethod() {
@@ -174,6 +169,13 @@ public class Client {
         return this.post(uri, header, entity);
     }
 
+    /**
+     * 向服务器发送一个带字符串实体的POST请求
+     * @param uri 资源地址
+     * @param header 头部信息
+     * @param data 字符串实体
+     * @return HTTP服务器返回的结果
+     */
     public String post(String uri, Map<String, String> header, String data) {
         HttpEntity entity = null;
         try {
@@ -184,12 +186,25 @@ public class Client {
         return this.post(uri, header, entity);
     }
 
+    /**
+     * 带请求实体的 POST 请求
+     * @param uri 资源地址
+     * @param header 头部信息
+     * @param entity 请求实体
+     * @return HTTP服务器返回的结果
+     */
     private String post(String uri, Map<String, String> header, HttpEntity entity) {
         HttpPost post = new HttpPost(uri);
         post.setEntity(entity);
         return this.httpBaseOperate(post, header);
     }
 
+    /**
+     * HTTP基础操作
+     * @param requestBase 基础操作对象
+     * @param header 请求头部信息
+     * @return HTTP服务器返回的结果
+     */
     private String httpBaseOperate(HttpRequestBase requestBase, Map<String, String> header) {
         HttpResponse response = null;
         String responseBody = null;
