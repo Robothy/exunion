@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import exunion.metaobjects.*;
@@ -76,7 +77,7 @@ public class GateExchange extends AExchange {
 		}
 		
 		Account account = new Account();
-		Map<String, Balance> balances = new HashMap<>();
+		Map<String, Balance> balances = new ConcurrentHashMap<>();
 		JSONObject available = jsonObject.getJSONObject("available");
 		available.keySet()
 		.parallelStream()
