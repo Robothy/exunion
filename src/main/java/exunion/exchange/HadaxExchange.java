@@ -12,6 +12,8 @@ public class HadaxExchange extends HuobiBase {
 	private static final String urlBase = "https://api.hadax.com";
 	
 	private static final String hostName = "api.hadax.com";
+
+    private static final String wsUrl = "wss://api.hadax.pro/ws";
 	
 	public HadaxExchange(String key, String secret, Boolean needProxy) {
 		super(key, secret, needProxy);
@@ -19,5 +21,6 @@ public class HadaxExchange extends HuobiBase {
 		setExchangeName(exchangeName);
 		setUrlBase(urlBase);
 		setHostName(hostName);
+		setWsUrl(wsUrl);
 	}
 }

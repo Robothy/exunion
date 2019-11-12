@@ -1,5 +1,6 @@
 package exunion.exchange;
 
+import exunion.websocket.WebsocketClientEnd;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,6 +24,11 @@ public abstract class AExchange implements Exchange {
 	protected String key = "";
 	
 	protected String secret = "";
+
+	/**
+	 * 共用的 Websocket 客户端
+	 */
+	protected WebsocketClientEnd sharedWsClientEnd;
 	
 	public AExchange(){
 		this(null, null, false);
@@ -61,4 +67,5 @@ public abstract class AExchange implements Exchange {
 		this.secret = secret;
 		return this;
 	}
+
 }

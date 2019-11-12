@@ -2,7 +2,9 @@ package exunion.exchange;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,9 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import exunion.util.*;
+import exunion.websocket.DeliveryBoy;
+import exunion.websocket.WebsocketClientEnd;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,10 +49,16 @@ abstract class HuobiBase extends AExchange {
 		this.exchangeName = exchangeName;
 	}
 
-	private String urlBase = "";
+	private String httpUrlBase = "";
 
 	void setUrlBase(String urlBase){
-		this.urlBase = urlBase;
+		this.httpUrlBase = httpUrlBase;
+	}
+
+	private String wsUrl = "";
+
+	void setWsUrl(String wsUrl){
+		this.wsUrl = wsUrl;
 	}
 
 	private String hostName = "";
@@ -119,6 +128,11 @@ abstract class HuobiBase extends AExchange {
 	HuobiBase(String key, String secret, Boolean needProxy) {
 		super(key, secret, needProxy);
 		sign = new HmacSign(HmacSign.HmacAlgorithm.HmacSHA256, secret);
+		try {
+			sharedWsClientEnd = new HuobiWebsocketClientEnd("");
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
 	}
 
 
@@ -139,7 +153,7 @@ abstract class HuobiBase extends AExchange {
 		String path = "/v1/hadax/account/accounts/" + accountsId.get(0) + "/balance";
 		String sign = sign("GET", hostName,  path, params);
 		String requestUrl = UrlParameterBuilder.MapToUrlParameter(params) + "&Signature=" + sign;
-		String json = client.get(urlBase + path + "?" + requestUrl, header);
+		String json = client.get(httpUrlBase + path + "?" + requestUrl, header);
 		if(null == json){
 			logger.error("获取账户{}信息时服务器{}无数据返回。", accountsId.get(0), exchangeName);
 			return null;
@@ -186,7 +200,7 @@ abstract class HuobiBase extends AExchange {
 		params.put("symbol", currencyStandizer.localize(currency));
 		params.put("type", "step0");
 
-		String json  = client.get(urlBase + "/market/depth?" + UrlParameterBuilder.MapToUrlParameter(params), header);
+		String json  = client.get(httpUrlBase + "/market/depth?" + UrlParameterBuilder.MapToUrlParameter(params), header);
 		if(null == json){
 			logger.error("获取{}深度信息时{}服务器无数据返回。", currency, exchangeName);
 			return null;
@@ -244,7 +258,7 @@ abstract class HuobiBase extends AExchange {
 		String path = "/v1/order/orders/" + orderId;
 
 		String sign = sign("GET", hostName, path, params);
-		String requestUrl = urlBase + path + "?" + UrlParameterBuilder.MapToUrlParameter(params) + "&Signature=" + sign;
+		String requestUrl = httpUrlBase + path + "?" + UrlParameterBuilder.MapToUrlParameter(params) + "&Signature=" + sign;
 		header.put("Content-Type", "application/x-www-form-urlencoded");
 		String json = client.get(requestUrl, header);
 
@@ -312,7 +326,7 @@ abstract class HuobiBase extends AExchange {
 
 		String path = "ETH_BTC".equals(currency) ? "/v1/order/orders/place" : "/v1/hadax/order/orders/place";
 		String sign = sign("POST", "ETH_BTC".equals(currency) ? "api.huobi.pro" : hostName, path, params);
-		String requestUrl = ("ETH_BTC".equals(currency) ? "https://api.huobi.pro" : urlBase) + path + "?" + UrlParameterBuilder.MapToUrlParameter(params) + "&Signature=" + sign;
+		String requestUrl = ("ETH_BTC".equals(currency) ? "https://api.huobi.pro" : httpUrlBase) + path + "?" + UrlParameterBuilder.MapToUrlParameter(params) + "&Signature=" + sign;
 		header.put("Content-Type", "application/json");
 		params.put("Signature", sign);
 		String json = client.post(requestUrl, header, JSON.toJSONString(formData));
@@ -347,8 +361,19 @@ abstract class HuobiBase extends AExchange {
 		return null;
 	}
 
+	public DeliveryBoy<Depth> subscribeDepth(String symbol){
+		sharedWsClientEnd.send("");
+
+		return sharedWsClientEnd.handleDepth();
+	}
+
+	public DeliveryBoy<Ticker> subscribeTicker(String symbol){
+		Ticker ticker = new Ticker();
+		return handler -> handler.handle(ticker);
+	}
+
 	@Override
-	public String getPlantformName() {
+	public String getExchangeName() {
 		return exchangeName;
 	}
 
@@ -361,7 +386,7 @@ abstract class HuobiBase extends AExchange {
 		String urlParams = UrlParameterBuilder.MapToUrlParameter(params);
 
 		header.put("Content-Type", "application/x-www-form-urlencoded");
-		String requestUrl = urlBase+ "/v1/account/accounts?" + urlParams + "&Signature=" + sign;
+		String requestUrl = httpUrlBase+ "/v1/account/accounts?" + urlParams + "&Signature=" + sign;
 
 		String json = client.get(requestUrl, header);
 
@@ -426,6 +451,60 @@ abstract class HuobiBase extends AExchange {
 		params.put("SignatureVersion", "2");
 		params.put("Timestamp", timestamp);
 		return params;
+	}
+
+	private class HuobiWebsocketClientEnd extends WebsocketClientEnd{
+
+		DeliveryBoy<Depth> depthDeliveryBoy = new DeliveryBoy<>();
+
+		/**
+		 * 构造方法
+		 *
+		 * @param serverUri uri字符串
+		 * @throws URISyntaxException 当uri字符串语法不正确时抛出此异常
+		 */
+		public HuobiWebsocketClientEnd(String serverUri) throws URISyntaxException {
+			super(serverUri);
+		}
+
+		public DeliveryBoy<Depth> subscribeDepth(String symbol) {
+			send("");
+			return depthDeliveryBoy;
+		}
+
+
+		@Override
+		public DeliveryBoy<Ticker> subscribeTicker(String symbol) {
+			return null;
+		}
+
+		@Override
+		public void onTicker(String json) {
+
+		}
+
+		@Override
+		public void onMessage(String message) {
+
+		}
+
+		/**
+		 * 服务器发送数据事件
+		 * @param bf 服务器发送过来的二进制数据
+		 */
+		public void onMessage(ByteBuffer bf){
+			String json = GZIPUtils.uncompressToString(bf.array());
+			onMessage(json);
+		}
+
+		/**
+		 * 服务端发来 Ping, 这里要返回 Pong
+		 * @param json 服务端发来的 json 数据
+		 */
+		private void onPing(String json){
+			;
+		}
+
 	}
 
 }

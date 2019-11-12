@@ -47,7 +47,7 @@ public class ProxyPool {
 			}
 		}else {
 			ClassLoader classLoader = ProxyPool.class.getClassLoader();
-			classLoader.getResourceAsStream(proxyFileName);
+			proxyFileStream = classLoader.getResourceAsStream(proxyFileName);
 		}
 
 
