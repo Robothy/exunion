@@ -1,0 +1,26 @@
+// Define Java conventions for this organization.
+// Projects need to use the Java
+
+plugins {
+    // NOTE: external plugin version is specified in implementation dependency artifact of the project's build file
+    id 'com.robothy.cn-repo'
+    id 'java'
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.6.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.compileJava {
+    options.encoding = "UTF-8"
+}

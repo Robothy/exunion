@@ -1,8 +1,12 @@
 # InteliJ
-
 *.iml
 .idea
+**/out/
+
 
 # Java
 *.class
-/build/
+**/build/
+
+# Gradle
+.gradle
