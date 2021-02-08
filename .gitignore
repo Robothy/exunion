@@ -1,0 +1,8 @@
+# InteliJ
+
+*.iml
+.idea
+
+# Java
+*.class
+/build/
