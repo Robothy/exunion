@@ -1,0 +1,19 @@
+plugins {
+    id 'exunion.java-conventions'
+    id 'maven-publish'
+}
+
+group = 'com.robothy'
+version = '1.0-SNAPSHOT'
+
+publishing {
+    publications {
+        library(MavenPublication) {
+            from components.java
+        }
+    }
+
+    repositories {
+        mavenLocal()
+    }
+}
