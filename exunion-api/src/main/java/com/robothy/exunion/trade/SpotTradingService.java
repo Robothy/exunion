@@ -13,4 +13,6 @@ interface SpotTradingService {
 
     Order cancel(Order order);
 
+    Order query(Order order);
+
 }
