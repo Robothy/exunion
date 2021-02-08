@@ -1,4 +1,5 @@
 plugins {
+    id 'com.robothy.cn-repo' version '1.8'
     id 'groovy-gradle-plugin'
 }
 
