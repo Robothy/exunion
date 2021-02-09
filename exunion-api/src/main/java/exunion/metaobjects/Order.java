@@ -2,6 +2,7 @@ package exunion.metaobjects;
 
 import java.math.BigDecimal;
 
+@Deprecated
 public class Order extends Error {
 
 	/**
@@ -26,11 +27,13 @@ public class Order extends Error {
 	/**
 	 * 订单类型
 	 */
+	@Deprecated
 	private String type = null;
 	
 	/**
 	 * 订单类型
 	 */
+	@Deprecated
 	public String getType() {
 		return type;
 	}
@@ -38,6 +41,7 @@ public class Order extends Error {
 	/**
 	 * 订单类型
 	 */
+	@Deprecated
 	public void setType(String type) {
 		this.type = type;
 	}

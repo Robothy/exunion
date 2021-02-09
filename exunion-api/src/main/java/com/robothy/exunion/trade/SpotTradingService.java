@@ -1,7 +1,5 @@
 package com.robothy.exunion.trade;
 
-import exunion.metaobjects.Order;
-
 /**
  * Spot trading service.
  */

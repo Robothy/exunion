@@ -5,6 +5,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Please use com.robothy.exunion.market.Depth for replacement
+ */
+@Deprecated
 public class Depth extends Error {
 	
     /**
