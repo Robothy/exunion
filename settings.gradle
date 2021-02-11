@@ -1,3 +1,3 @@
 rootProject.name = 'exunion'
 
-include 'exunion-api', 'exunion-service'
+include 'exunion-api', 'exunion-core'
