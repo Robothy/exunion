@@ -1,4 +1,4 @@
-package com.robothy.exunion.market;
+package com.robothy.exunion.api.market;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
@@ -6,7 +6,9 @@ import java.util.List;
 
 public class Depth {
 
-    /** 投标价格（买价） */
+    /**
+     * 投标价格（买价）
+     */
     private List<PriceQuotation> bids = null;
 
     /**
@@ -20,7 +22,7 @@ public class Depth {
      * set the bids, make sure the are sorted by price in <b>ascending</b>.
      * <p>
      * <code>
-     *     Arrays.sort(bids, Depth.PriceQuotation.ASC);
+     * Arrays.sort(bids, Depth.PriceQuotation.ASC);
      * <code/>
      */
     public void setBids(List<PriceQuotation> bids) {
@@ -34,6 +36,7 @@ public class Depth {
 
     /**
      * 返回交易平台排序之后的卖单
+     *
      * @return 有序的卖单
      */
     public List<PriceQuotation> getAsks() {
@@ -44,7 +47,7 @@ public class Depth {
      * Set the asks. Make sure the passed parameter is sorted by price in <b>decreasing</b>.
      * <p>
      * <code>
-     *     Arrays.sort(asks, Depth.PriceQuotation.DESC);
+     * Arrays.sort(asks, Depth.PriceQuotation.DESC);
      * </code>
      */
     public void setAsks(List<PriceQuotation> asks) {
@@ -59,6 +62,7 @@ public class Depth {
 
     /**
      * format: {base currency}_{quote currency}
+     *
      * @param symbol ETH_BTC, BTC_USDT, ...
      */
     public void setSymbol(String symbol) {
@@ -87,16 +91,16 @@ public class Depth {
 
     /**
      * price and quantity pair
-     * @author robothy
      *
+     * @author robothy
      */
-    public static class PriceQuotation{
+    public static class PriceQuotation {
 
         public static final Comparator<PriceQuotation> ASC = Comparator.comparing(a -> a.price);
 
         public static final Comparator<PriceQuotation> DESC = (a, b) -> b.price.compareTo(a.price);
 
-        public PriceQuotation(BigDecimal price, BigDecimal quantity){
+        public PriceQuotation(BigDecimal price, BigDecimal quantity) {
             this.price = price;
             this.quantity = quantity;
         }

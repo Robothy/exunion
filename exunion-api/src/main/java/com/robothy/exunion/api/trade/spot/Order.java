@@ -1,11 +1,13 @@
-package com.robothy.exunion.trade;
+package com.robothy.exunion.api.trade.spot;
 
 import java.math.BigDecimal;
 import java.util.Map;
 
 public class Order {
 
-    /** Order status */
+    /**
+     * Order status
+     */
     private Status status = null;
 
     public Status getStatus() {
@@ -16,7 +18,9 @@ public class Order {
         this.status = status;
     }
 
-    /** Order side, buy or sell */
+    /**
+     * Order side, buy or sell
+     */
     private String side = null;
 
     public String getSide() {
@@ -27,7 +31,9 @@ public class Order {
         this.side = side;
     }
 
-    /** symbol of this order, format: {base currency}_{quote currency}. */
+    /**
+     * symbol of this order, format: {base currency}_{quote currency}.
+     */
     private String symbol = null;
 
     public String getSymbol() {
@@ -38,7 +44,9 @@ public class Order {
         this.symbol = symbol;
     }
 
-    /** the quantity of base currency of this order */
+    /**
+     * the quantity of base currency of this order
+     */
     private BigDecimal quantity = null;
 
     public BigDecimal getQuantity() {
@@ -49,7 +57,9 @@ public class Order {
         this.quantity = quantity;
     }
 
-    /** the price of this order */
+    /**
+     * the price of this order
+     */
     private BigDecimal price = null;
 
     public BigDecimal getPrice() {
@@ -60,7 +70,9 @@ public class Order {
         this.price = price;
     }
 
-    /** executed amount(quote currency). */
+    /**
+     * executed amount(quote currency).
+     */
     private BigDecimal executedAmount;
 
     public BigDecimal getExecutedAmount() {
@@ -71,7 +83,9 @@ public class Order {
         this.executedAmount = executedAmount;
     }
 
-    /** executed quantity(base currency) */
+    /**
+     * executed quantity(base currency)
+     */
     private BigDecimal executedQuantity;
 
     public BigDecimal getExecutedQuantity() {
@@ -82,7 +96,9 @@ public class Order {
         this.executedQuantity = executedQuantity;
     }
 
-    /** order ID */
+    /**
+     * order ID
+     */
     private String orderId = null;
 
     public String getOrderId() {
@@ -93,7 +109,9 @@ public class Order {
         this.orderId = orderId;
     }
 
-    /** commission timestamp */
+    /**
+     * commission timestamp
+     */
     private Long commissionTimestamp;
 
     public Long getCommissionTimestamp() {
@@ -104,7 +122,9 @@ public class Order {
         this.commissionTimestamp = commissionTimestamp;
     }
 
-    /** Extra information */
+    /**
+     * Extra information
+     */
     public Map<String, Object> extraInfo;
 
     public Map<String, Object> getExtraInfo() {

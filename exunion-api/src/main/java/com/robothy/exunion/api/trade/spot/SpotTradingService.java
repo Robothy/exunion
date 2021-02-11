@@ -1,9 +1,9 @@
-package com.robothy.exunion.trade;
+package com.robothy.exunion.api.trade.spot;
 
 /**
  * Spot trading service.
  */
-interface SpotTradingService {
+public interface SpotTradingService {
 
     Order buy(Order order);
 

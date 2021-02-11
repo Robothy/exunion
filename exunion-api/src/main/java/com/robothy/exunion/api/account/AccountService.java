@@ -1,4 +1,4 @@
-package com.robothy.exunion.account;
+package com.robothy.exunion.api.account;
 
 import exunion.metaobjects.Account;
 

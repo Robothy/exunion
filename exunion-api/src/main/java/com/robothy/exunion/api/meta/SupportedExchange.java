@@ -1,8 +1,9 @@
-package com.robothy.exunion.meta;
+package com.robothy.exunion.api.meta;
 
 public enum SupportedExchange {
 
-    HUOBI("huobi.com", "https://huobi.be");
+    HUOBI("huobi.com", "https://huobi.be"),
+    ;
 
     SupportedExchange(String name, String[] apiServer) {
         this.name = name;
