@@ -1,4 +1,4 @@
-package com.robothy.exunion.api.service.exception;
+package com.robothy.exunion.core.exception;
 
 public class ServiceNotFoundException extends RuntimeException {
 

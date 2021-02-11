@@ -1,9 +1,9 @@
-package com.robothy.exunion.api.service.trade.spot;
+package com.robothy.exunion.core.trade.spot;
 
 import com.robothy.exunion.api.auth.Token;
 import com.robothy.exunion.api.meta.SupportedExchange;
-import com.robothy.exunion.api.service.exception.InvalidOperationException;
-import com.robothy.exunion.api.service.util.TradingServiceProvider;
+import com.robothy.exunion.core.exception.InvalidOperationException;
+import com.robothy.exunion.core.util.TradingServiceProvider;
 import com.robothy.exunion.api.trade.AbstractTradingService;
 import com.robothy.exunion.api.trade.spot.AbstractSpotTradingService;
 import com.robothy.exunion.api.trade.spot.SpotTradingService;

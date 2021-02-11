@@ -1,8 +1,10 @@
-package com.robothy.exunion.api.service.trade.spot;
+package com.robothy.exunion.core.trade.spot;
 
+import com.robothy.exunion.api.exception.TradingException;
 import com.robothy.exunion.api.trade.spot.Order;
 import com.robothy.exunion.api.trade.spot.SpotTradingService;
 
+import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -18,22 +20,22 @@ public class SpotTradingServiceProxy implements SpotTradingService {
     }
 
     @Override
-    public Order buy(Order order) {
+    public Order buy(Order order) throws IOException, TradingException {
         return instance.buy(order);
     }
 
     @Override
-    public Order sell(Order order) {
+    public Order sell(Order order) throws IOException, TradingException {
         return instance.sell(order);
     }
 
     @Override
-    public Order cancel(Order order) {
+    public Order cancel(Order order) throws IOException, TradingException {
         return instance.cancel(order);
     }
 
     @Override
-    public Order query(Order order) {
+    public Order query(Order order) throws IOException, TradingException {
         return instance.query(order);
     }
 }
