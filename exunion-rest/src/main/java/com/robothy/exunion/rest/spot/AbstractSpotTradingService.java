@@ -1,11 +1,14 @@
-package com.robothy.exunion.api.trade.spot;
+package com.robothy.exunion.rest.spot;
+
+import com.robothy.exunion.rest.AbstractExchangeService;
 
 import java.math.BigDecimal;
 
 /**
  * Common properties of spot trading service.
  */
-public class AbstractSpotTradingService {
+public abstract class AbstractSpotTradingService extends AbstractExchangeService
+        implements SpotTradingService {
 
     /**
      * The fee rate when you buy crypto currency, this property has a higher priority than <code>defaultFeeRate</code>

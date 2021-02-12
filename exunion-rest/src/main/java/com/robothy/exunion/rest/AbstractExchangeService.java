@@ -1,13 +1,13 @@
-package com.robothy.exunion.api.trade;
+package com.robothy.exunion.rest;
 
-import com.robothy.exunion.api.auth.Token;
+import com.robothy.exunion.core.auth.Token;
 
 import java.util.Map;
 
 /**
  * Define shared properties in different trading services.
  */
-public class AbstractTradingService {
+public abstract class AbstractExchangeService implements ExchangeService {
 
     private Token token;
 
@@ -28,4 +28,5 @@ public class AbstractTradingService {
     public void setExtraProperties(Map<String, Object> extraProperties) {
         this.extraProperties = extraProperties;
     }
+
 }

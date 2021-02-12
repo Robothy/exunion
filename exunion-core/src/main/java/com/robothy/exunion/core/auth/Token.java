@@ -1,4 +1,4 @@
-package com.robothy.exunion.api.auth;
+package com.robothy.exunion.core.auth;
 
 public class Token {
 

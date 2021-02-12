@@ -1,4 +1,4 @@
-package com.robothy.exunion.api.trade.spot;
+package com.robothy.exunion.core.trade.spot;
 
 import java.math.BigDecimal;
 import java.util.Map;

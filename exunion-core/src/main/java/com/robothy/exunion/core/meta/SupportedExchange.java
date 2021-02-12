@@ -1,4 +1,4 @@
-package com.robothy.exunion.api.meta;
+package com.robothy.exunion.core.meta;
 
 public enum SupportedExchange {
 

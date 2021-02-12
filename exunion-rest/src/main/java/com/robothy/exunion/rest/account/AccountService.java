@@ -1,6 +1,6 @@
-package com.robothy.exunion.api.account;
+package com.robothy.exunion.rest.account;
 
-import exunion.metaobjects.Account;
+import com.robothy.exunion.core.account.Account;
 
 interface AccountService {
 

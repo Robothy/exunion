@@ -1,10 +1,9 @@
-package com.robothy.exunion.core.util;
+package com.robothy.exunion.rest.util;
 
-import com.robothy.exunion.api.annotation.Version;
-import com.robothy.exunion.api.meta.SupportedExchange;
-import com.robothy.exunion.api.trade.spot.SpotTradingService;
-import com.robothy.exunion.api.trade.TradingService;
+import com.robothy.exunion.core.annotation.Version;
+import com.robothy.exunion.core.meta.SupportedExchange;
 import com.robothy.exunion.core.exception.ServiceNotFoundException;
+import com.robothy.exunion.rest.ExchangeService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,7 +17,7 @@ public class TradingServiceProvider {
     /**
      * cache for quickly find the latest version of implementation.
      */
-    private static final Map<SupportedExchange, Map<Class<?>, Class<? extends TradingService>>> CACHE = new HashMap<>();
+    private static final Map<SupportedExchange, Map<Class<?>, Class<? extends ExchangeService>>> CACHE = new HashMap<>();
 
     /**
      * Provide a trading service instance by exchange and the trading type (an interface).
@@ -27,23 +26,24 @@ public class TradingServiceProvider {
      * @param clazz    the trading type.
      * @return a new trading instance.
      * @see SupportedExchange
-     * @see SpotTradingService
+     * @see com.robothy.exunion.rest.spot.SpotTradingService
      */
-    public static TradingService newInstance(SupportedExchange exchange, Class<?> clazz) {
+    @SuppressWarnings("unchecked")
+    public static <T> T newInstance(SupportedExchange exchange, Class<T> clazz) {
 
         // load all trading services at once.
         if (!CACHE.containsKey(exchange) || !CACHE.get(exchange).containsKey(clazz)) {
 
-            ServiceLoader<TradingService> serviceLoader = ServiceLoader.load(TradingService.class);
-            Iterator<TradingService> it = serviceLoader.iterator();
+            ServiceLoader<ExchangeService> serviceLoader = ServiceLoader.load(ExchangeService.class);
+            Iterator<ExchangeService> it = serviceLoader.iterator();
             List<VersionedService> services = new ArrayList<>();
             while (it.hasNext()) {
-                TradingService tradingService = it.next();
+                ExchangeService exchangeService = it.next();
 
-                for (Class<?> i : tradingService.getClass().getInterfaces()) {
+                for (Class<?> i : exchangeService.getClass().getInterfaces()) {
                     if (i == clazz) {
                         Version version = i.getAnnotation(Version.class);
-                        services.add(new VersionedService(version == null ? "1.0" : version.value(), tradingService));
+                        services.add(new VersionedService(version == null ? "1.0" : version.value(), exchangeService));
                         break;
                     }
                 }
@@ -61,20 +61,21 @@ public class TradingServiceProvider {
             CACHE.get(exchange).put(clazz, services.get(0).service.getClass());
         }
 
-        TradingService tradingService = null;
+        ExchangeService exchangeService = null;
         try {
-            tradingService = CACHE.get(exchange).get(clazz).newInstance();
+            exchangeService = CACHE.get(exchange).get(clazz).newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             // Ignore these exception, because the SPI invocation in prior steps checked instantiation and permission.
         }
-        return tradingService;
+
+        return (T) exchangeService;
     }
 
     private static class VersionedService {
         String version;
-        TradingService service;
+        ExchangeService service;
 
-        VersionedService(String version, TradingService service) {
+        VersionedService(String version, ExchangeService service) {
             this.version = version;
             this.service = service;
         }

@@ -1,4 +1,4 @@
-package com.robothy.exunion.api.annotation;
+package com.robothy.exunion.core.annotation;
 
 import java.lang.annotation.*;
 

@@ -1,4 +1,4 @@
-package com.robothy.exunion.api.trade;
+package com.robothy.exunion.core.trade;
 
 /**
  * Trading error message abstraction, the implementation must tell the
