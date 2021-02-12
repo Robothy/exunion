@@ -4,4 +4,5 @@ plugins {
 
 dependencies {
     implementation project(':exunion-api')
+    implementation project(':exunion-core')
 }
