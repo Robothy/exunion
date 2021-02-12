@@ -1,6 +1,6 @@
 package com.robothy.exunion.api.trade.spot;
 
-import com.robothy.exunion.api.exception.TradingException;
+import com.robothy.exunion.api.exception.ExchangeException;
 
 import java.io.IOException;
 
@@ -9,12 +9,12 @@ import java.io.IOException;
  */
 public interface SpotTradingService {
 
-    Order buy(Order order) throws TradingException, IOException;
+    Order buy(Order order) throws ExchangeException, IOException;
 
-    Order sell(Order order) throws TradingException, IOException;
+    Order sell(Order order) throws ExchangeException, IOException;
 
-    Order cancel(Order order) throws TradingException, IOException;
+    Order cancel(Order order) throws ExchangeException, IOException;
 
-    Order query(Order order) throws TradingException, IOException;
+    Order query(Order order) throws ExchangeException, IOException;
 
 }

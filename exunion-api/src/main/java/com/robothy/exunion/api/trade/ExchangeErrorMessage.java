@@ -4,7 +4,7 @@ package com.robothy.exunion.api.trade;
  * Trading error message abstraction, the implementation must tell the
  * error code, error message, and which exchange.
  */
-public interface TradingErrorMessage {
+public interface ExchangeErrorMessage {
 
     String code();
 

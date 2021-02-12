@@ -2,12 +2,13 @@ package com.robothy.exunion.core.trade.spot;
 
 import com.robothy.exunion.api.auth.Token;
 import com.robothy.exunion.api.meta.SupportedExchange;
-import com.robothy.exunion.core.exception.InvalidOperationException;
-import com.robothy.exunion.core.util.TradingServiceProvider;
 import com.robothy.exunion.api.trade.AbstractTradingService;
 import com.robothy.exunion.api.trade.spot.AbstractSpotTradingService;
 import com.robothy.exunion.api.trade.spot.SpotTradingService;
 import com.robothy.exunion.api.trade.TradingService;
+import com.robothy.exunion.core.util.BaseExchangeServiceBuilder;
+import com.robothy.exunion.core.exception.InvalidOperationException;
+import com.robothy.exunion.core.util.TradingServiceProvider;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -17,7 +18,7 @@ import java.util.Map;
  * set the exchange, then set the other properties. Finally, call <code>build()</code> to get
  * the instance.
  */
-public class SpotTradingServiceBuilder {
+public class SpotTradingServiceBuilder extends BaseExchangeServiceBuilder {
 
     private TradingService tradingService;
 
@@ -36,6 +37,16 @@ public class SpotTradingServiceBuilder {
             this.abstractSpotTradingService = (AbstractSpotTradingService) this.tradingService;
         }
 
+        return this;
+    }
+
+    /**
+     * Set API token, equals <code>apiKey(), apiSecret()</code>
+     */
+    public SpotTradingServiceBuilder token(Token token){
+        checkExchange();
+        checkAbstractTradingService("Token");
+        this.abstractTradingService.setToken(token);
         return this;
     }
 

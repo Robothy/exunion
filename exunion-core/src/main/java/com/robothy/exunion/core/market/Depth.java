@@ -1,4 +1,4 @@
-package com.robothy.exunion.api.market;
+package com.robothy.exunion.core.market;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
