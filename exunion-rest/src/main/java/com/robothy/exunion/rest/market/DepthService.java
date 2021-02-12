@@ -6,7 +6,7 @@ import com.robothy.exunion.rest.ExchangeService;
 
 import java.io.IOException;
 
-interface DepthService extends ExchangeService {
+public interface DepthService extends ExchangeService {
 
     /**
      * Get depth by symbol.
