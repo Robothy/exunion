@@ -1,7 +1,6 @@
 package com.robothy.exunion.api.trade.spot;
 
 import com.robothy.exunion.api.exception.TradingException;
-
 import java.io.IOException;
 
 /**
