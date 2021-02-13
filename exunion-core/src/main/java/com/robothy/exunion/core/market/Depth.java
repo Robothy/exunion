@@ -1,5 +1,7 @@
 package com.robothy.exunion.core.market;
 
+import com.robothy.exunion.core.meta.Symbol;
+
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
@@ -54,9 +56,9 @@ public class Depth {
         this.asks = asks;
     }
 
-    private String symbol = null;
+    private Symbol symbol = null;
 
-    public String getSymbol() {
+    public Symbol getSymbol() {
         return symbol;
     }
 
@@ -65,7 +67,7 @@ public class Depth {
      *
      * @param symbol ETH_BTC, BTC_USDT, ...
      */
-    public void setSymbol(String symbol) {
+    public void setSymbol(Symbol symbol) {
         this.symbol = symbol;
     }
 
