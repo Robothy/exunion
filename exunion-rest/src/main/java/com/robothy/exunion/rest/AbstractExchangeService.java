@@ -1,5 +1,8 @@
 package com.robothy.exunion.rest;
 
+import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.JsonFactory;
 import com.robothy.exunion.core.auth.Token;
 
 import java.util.Map;
@@ -12,6 +15,12 @@ public abstract class AbstractExchangeService implements ExchangeService {
     private Token token;
 
     private Map<String, Object> extraProperties;
+
+    private HttpTransport httpTransport;
+
+    private JsonFactory jsonFactory;
+
+    protected HttpRequestFactory requestFactory;
 
     public Token getToken() {
         return token;
@@ -29,4 +38,27 @@ public abstract class AbstractExchangeService implements ExchangeService {
         this.extraProperties = extraProperties;
     }
 
+    public HttpTransport getHttpTransport() {
+        return httpTransport;
+    }
+
+    public void setHttpTransport(HttpTransport httpTransport) {
+        this.httpTransport = httpTransport;
+    }
+
+    public JsonFactory getJsonFactory() {
+        return jsonFactory;
+    }
+
+    public void setJsonFactory(JsonFactory jsonFactory) {
+        this.jsonFactory = jsonFactory;
+    }
+
+    public HttpRequestFactory getRequestFactory() {
+        return requestFactory;
+    }
+
+    public void setRequestFactory(HttpRequestFactory requestFactory) {
+        this.requestFactory = requestFactory;
+    }
 }

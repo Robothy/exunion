@@ -45,8 +45,8 @@ public class SpotTradingServiceBuilder extends AbstractExchangeServiceBuilder<Sp
     }
 
     public SpotTradingService build() {
-        super.checkExchange();
-        this.abstractSpotTradingService.init();
+        super.build();                  // from AbstractExchangeServiceBuilder
+        super.exchangeService.init();   // from ExchangeService
         return new SpotTradingServiceProxy(this.abstractSpotTradingService);
     }
 

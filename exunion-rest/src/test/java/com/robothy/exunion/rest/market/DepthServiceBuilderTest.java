@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 class DepthServiceBuilderTest {
     @Test
     void build() {
-        DepthService depthService = DepthServiceBuilder.builder()
+        DepthService depthService = DepthServiceBuilder.create()
                 .exchange(SupportedExchange.HUOBI)
                 .build();
         Assertions.assertNotNull(depthService);
