@@ -6,6 +6,5 @@ dependencies {
     implementation project(':exunion-core')
     implementation project(':exunion-rest')
     implementation 'com.google.http-client:google-http-client:1.38.0'
-
     testImplementation 'com.google.http-client:google-http-client-jackson2:1.38.0'
 }
