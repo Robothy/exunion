@@ -1,6 +1,6 @@
 package com.robothy.exunion.core.exception;
 
-import com.robothy.exunion.core.trade.TradingErrorMessage;
+import com.robothy.exunion.core.trade.ExchangeErrorMessage;
 
 /**
  * Throws when API server report an error message for a request.
@@ -8,18 +8,21 @@ import com.robothy.exunion.core.trade.TradingErrorMessage;
  */
 public class ExchangeException extends Exception {
 
-    private TradingErrorMessage tradingErrorMessage;
+    private ExchangeErrorMessage exchangeErrorMessage;
 
-    public ExchangeException(TradingErrorMessage tradingErrorMessage){
-        super();
-        this.tradingErrorMessage = tradingErrorMessage;
+    public ExchangeException(ExchangeErrorMessage exchangeErrorMessage){
+        this.exchangeErrorMessage = exchangeErrorMessage;
     }
 
-    public TradingErrorMessage getTradingErrorMessage() {
-        return tradingErrorMessage;
+    public ExchangeException(String message){
+        super(message);
     }
 
-    public void setTradingErrorMessage(TradingErrorMessage tradingErrorMessage) {
-        this.tradingErrorMessage = tradingErrorMessage;
+    public ExchangeErrorMessage getTradingErrorMessage() {
+        return exchangeErrorMessage;
+    }
+
+    public void setTradingErrorMessage(ExchangeErrorMessage exchangeErrorMessage) {
+        this.exchangeErrorMessage = exchangeErrorMessage;
     }
 }

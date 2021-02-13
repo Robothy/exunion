@@ -10,13 +10,12 @@ public class DepthServiceBuilder extends AbstractExchangeServiceBuilder<DepthSer
     }
 
     public DepthService build(){
-        super.exchangeService.init();
-        DepthService depthService = (DepthService) super.exchangeService;
-        return new DepthServiceProxy(depthService);
+        super.build();                  // from AbstractExchangeServiceBuilder
+        super.exchangeService.init();   // from ExchangeService
+        return new DepthServiceProxy((DepthService) super.exchangeService);
     }
 
-    public static DepthServiceBuilder builder(){
+    public static DepthServiceBuilder create(){
         return new DepthServiceBuilder();
     }
-
 }

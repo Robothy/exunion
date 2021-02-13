@@ -3,5 +3,6 @@ plugins {
 }
 
 dependencies {
-    implementation project(':exunion-core')
+    implementation project (':exunion-core')
+    implementation 'com.google.http-client:google-http-client:1.38.0'
 }

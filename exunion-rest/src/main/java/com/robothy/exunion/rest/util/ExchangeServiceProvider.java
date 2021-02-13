@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 
-public class TradingServiceProvider {
+public class ExchangeServiceProvider {
 
     /**
      * cache for quickly find the latest version of implementation.

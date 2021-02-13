@@ -1,12 +1,18 @@
 package com.robothy.exunion.rest;
 
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.JsonObjectParser;
 import com.robothy.exunion.core.auth.Token;
 import com.robothy.exunion.core.exception.InvalidOperationException;
 import com.robothy.exunion.core.meta.SupportedExchange;
-import com.robothy.exunion.rest.spot.SpotTradingService;
-import com.robothy.exunion.rest.util.TradingServiceProvider;
+import com.robothy.exunion.rest.util.ExchangeServiceProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @param <T> the builder that extents <code>AbstractExchangeServiceBuilder</code>.
@@ -14,16 +20,18 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public abstract class AbstractExchangeServiceBuilder<T> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractExchangeServiceBuilder.class);
+
     protected ExchangeService exchangeService;
 
     protected AbstractExchangeService abstractExchangeService;
 
-    protected T exchange(SupportedExchange exchange, Class<? extends ExchangeService> clazz){
-        this.exchangeService = TradingServiceProvider.newInstance(exchange, clazz);
-        if(this.exchangeService instanceof AbstractExchangeService){
-            this.abstractExchangeService = (AbstractExchangeService) TradingServiceProvider.newInstance(exchange, SpotTradingService.class);
+    protected T exchange(SupportedExchange exchange, Class<? extends ExchangeService> clazz) {
+        this.exchangeService = ExchangeServiceProvider.newInstance(exchange, clazz);
+        if (this.exchangeService instanceof AbstractExchangeService) {
+            this.abstractExchangeService = (AbstractExchangeService) exchangeService;
         }
-        return (T)this;
+        return (T) this;
     }
 
     public T apiKey(String apiKey) {
@@ -33,7 +41,7 @@ public abstract class AbstractExchangeServiceBuilder<T> {
             this.abstractExchangeService.setToken(new Token());
         }
         this.abstractExchangeService.getToken().setApiKey(apiKey);
-        return (T)this;
+        return (T) this;
     }
 
     public T apiSecret(String apiSecret) {
@@ -43,13 +51,27 @@ public abstract class AbstractExchangeServiceBuilder<T> {
             this.abstractExchangeService.setToken(new Token());
         }
         this.abstractExchangeService.getToken().setApiSecret(apiSecret);
-        return (T)this;
+        return (T) this;
     }
 
-    public T token(Token token){
+    public T token(Token token) {
         checkExchange();
         checkAbstractExchangeService("Token");
         this.abstractExchangeService.setToken(token);
+        return (T) this;
+    }
+
+    public T httpTransport(HttpTransport httpTransport) {
+        checkExchange();
+        checkAbstractExchangeService("com.google.api.client.http.HttpTransport");
+        this.abstractExchangeService.setHttpTransport(httpTransport);
+        return (T) this;
+    }
+
+    public T jsonFactory(JsonFactory jsonFactory) {
+        checkExchange();
+        checkAbstractExchangeService("com.google.api.client.json.JsonFactory");
+        this.abstractExchangeService.setJsonFactory(jsonFactory);
         return (T) this;
     }
 
@@ -57,7 +79,7 @@ public abstract class AbstractExchangeServiceBuilder<T> {
         checkExchange();
         checkAbstractExchangeService("Extra Properties");
         this.abstractExchangeService.setExtraProperties(extraProperties);
-        return (T)this;
+        return (T) this;
     }
 
     private void checkAbstractExchangeService(String property) {
@@ -71,6 +93,23 @@ public abstract class AbstractExchangeServiceBuilder<T> {
         if (this.abstractExchangeService == null) {
             throw new InvalidOperationException("Please call exchange() as the first step to build trading service instance");
         }
+    }
+
+    protected Object build() {
+        checkExchange();
+        if (this.abstractExchangeService != null) {
+            Objects.requireNonNull(this.abstractExchangeService.getJsonFactory(), "");
+
+            if (this.abstractExchangeService.getHttpTransport() == null) {
+                LOGGER.info("HttpTransport doesn't set, Use " + NetHttpTransport.class.getName() + " as default HttpTransport" );
+                this.abstractExchangeService.setHttpTransport(new NetHttpTransport());
+            }
+
+            HttpTransport httpTransport = this.abstractExchangeService.getHttpTransport();
+            JsonFactory jsonFactory = this.abstractExchangeService.getJsonFactory();
+            this.abstractExchangeService.requestFactory = httpTransport.createRequestFactory(request -> request.setParser(new JsonObjectParser(jsonFactory)));
+        }
+        return this;
     }
 
 }
