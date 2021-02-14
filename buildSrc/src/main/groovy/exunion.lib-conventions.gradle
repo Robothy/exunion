@@ -15,5 +15,15 @@ publishing {
 
     repositories {
         mavenLocal()
+
+        maven{
+            name = 'GithubPackages'
+            url = uri('https://maven.pkg.github.com/Robothy/exunion')
+            credentials {
+                username = project.findProperty('github.username');
+                password = project.findProperty('github.packages.token');
+            }
+        }
     }
+
 }
