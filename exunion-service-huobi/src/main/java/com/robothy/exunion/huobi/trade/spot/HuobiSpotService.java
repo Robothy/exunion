@@ -3,20 +3,26 @@ package com.robothy.exunion.huobi.trade.spot;
 import com.robothy.exunion.core.exception.ExchangeException;
 import com.robothy.exunion.core.meta.SupportedExchange;
 import com.robothy.exunion.core.trade.spot.Order;
-import com.robothy.exunion.rest.spot.SpotTradingService;
+import com.robothy.exunion.rest.spot.AbstractSpotTradingService;
 
 import java.io.IOException;
 import java.util.List;
 
-public class HuobiSpotService implements SpotTradingService {
+public class HuobiSpotService extends AbstractSpotTradingService {
+
+    @Override
+    public void init() {
+        
+    }
 
     @Override
     public SupportedExchange exchange() {
-        return null;
+        return SupportedExchange.HUOBI;
     }
 
     @Override
     public Order place(Order order) throws ExchangeException, IOException {
+        String.format("%s/v1/order/orders/place", SupportedExchange.HUOBI.getDefaultApiServer());
         return null;
     }
 

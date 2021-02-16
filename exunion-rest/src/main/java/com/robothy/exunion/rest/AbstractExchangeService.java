@@ -22,6 +22,8 @@ public abstract class AbstractExchangeService implements ExchangeService {
 
     protected HttpRequestFactory requestFactory;
 
+    private String apiServer;
+
     public Token getToken() {
         return token;
     }
@@ -60,5 +62,13 @@ public abstract class AbstractExchangeService implements ExchangeService {
 
     public void setRequestFactory(HttpRequestFactory requestFactory) {
         this.requestFactory = requestFactory;
+    }
+
+    public String getApiServer() {
+        return apiServer;
+    }
+
+    public void setApiServer(String apiServer) {
+        this.apiServer = apiServer;
     }
 }
