@@ -12,9 +12,7 @@ public class HuobiSpotService extends AbstractSpotTradingService {
 
     @Override
     public void init() {
-        if(super.getApiServer()==null){
-            super.setApiServer(exchange().getDefaultApiServer());
-        }
+        
     }
 
     @Override
