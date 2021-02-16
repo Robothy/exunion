@@ -12,7 +12,7 @@ public class HuobiSpotService extends AbstractSpotTradingService {
 
     @Override
     public void init() {
-        
+
     }
 
     @Override

@@ -82,6 +82,11 @@ class AbstractExchangeServiceBuilderTest {
 
     @Test
     void apiServer() {
+        builder.exchange(SupportedExchange.HUOBI, DepthService.class)
+                .jsonFactory(new JacksonFactory())
+                .build();
+        Assertions.assertEquals(SupportedExchange.HUOBI.getDefaultApiServer(), builder.abstractExchangeService.getApiServer());
+
         String server = "https://api.example.com";
         builder.exchange(SupportedExchange.HUOBI, DepthService.class)
                 .apiServer(server);
