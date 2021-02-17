@@ -13,9 +13,16 @@ repositories {
     mavenCentral()
 }
 
+// Load version
+ext {
+    libVersion = new Properties()
+    def versionFile = new File("${project.rootProject.rootDir}/buildSrc/src/main/resources/version.properties")
+    ext.libVersion.load(versionFile.newInputStream())
+}
+
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.6.0'
-    implementation 'org.slf4j:slf4j-api:1.7.30'
+    testImplementation "org.junit.jupiter:junit-jupiter:${libVersion['org.junit.jupiter.junit-jupiter']}"
+    implementation "org.slf4j:slf4j-api:${libVersion['org.slf4j.slf4j-api']}"
 }
 
 test {

@@ -4,5 +4,5 @@ plugins {
 
 dependencies {
     implementation project(':exunion-api')
-    implementation 'commons-codec:commons-codec:1.9'
+    implementation "commons-codec:commons-codec:${libVersion['commons-codec.commons-codec']}"
 }
