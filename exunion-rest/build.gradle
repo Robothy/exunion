@@ -4,6 +4,6 @@ plugins {
 
 dependencies {
     implementation project(':exunion-core')
-    implementation 'com.google.http-client:google-http-client:1.38.0'
-    testImplementation 'com.google.http-client:google-http-client-jackson2:1.38.0'
+    implementation "com.google.http-client:google-http-client:${libVersion['google-http-client.google-http-client']}"
+    testImplementation "com.google.http-client:google-http-client-jackson2:${libVersion['google-http-client.google-http-client-jackson2']}"
 }
