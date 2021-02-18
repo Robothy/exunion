@@ -1,5 +1,7 @@
 package com.robothy.exunion.core.trade.spot;
 
+import com.robothy.exunion.core.meta.Symbol;
+
 import java.math.BigDecimal;
 import java.util.Map;
 
@@ -47,13 +49,13 @@ public class Order {
     /**
      * symbol of this order, format: {base currency}_{quote currency}.
      */
-    private String symbol = null;
+    private Symbol symbol = null;
 
-    public String getSymbol() {
+    public Symbol getSymbol() {
         return symbol;
     }
 
-    public void setSymbol(String symbol) {
+    public void setSymbol(Symbol symbol) {
         this.symbol = symbol;
     }
 
@@ -138,7 +140,7 @@ public class Order {
     /**
      * Extra information
      */
-    public Map<String, Object> extraInfo;
+    private Map<String, Object> extraInfo;
 
     public Map<String, Object> getExtraInfo() {
         return extraInfo;
