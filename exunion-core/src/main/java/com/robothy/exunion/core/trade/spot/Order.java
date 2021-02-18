@@ -21,14 +21,27 @@ public class Order {
     /**
      * Order side, buy or sell
      */
-    private String side = null;
+    private Side side = null;
 
-    public String getSide() {
+    public Side getSide() {
         return side;
     }
 
-    public void setSide(String side) {
+    public void setSide(Side side) {
         this.side = side;
+    }
+
+    /**
+     * Order type, limit, market
+     */
+    private Type type = null;
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 
     /**
@@ -140,6 +153,10 @@ public class Order {
      */
     public enum Side {
         BUY, SELL
+    }
+
+    public enum Type{
+        LIMIT, MARKET
     }
 
     /**
