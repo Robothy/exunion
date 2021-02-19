@@ -1,11 +1,13 @@
 package com.robothy.exunion.huobi.trade.spot;
 
+import com.google.api.client.json.JsonString;
 import com.google.api.client.util.Key;
 import com.robothy.exunion.core.trade.spot.SpotOrder;
 import com.robothy.exunion.huobi.market.HuobiSymbol;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public class HuobiSpotOrder {
@@ -38,9 +40,11 @@ public class HuobiSpotOrder {
     @Key("type")
     private String type;
 
+    @JsonString
     @Key("amount")
     private BigDecimal amount;
 
+    @JsonString
     @Key("price")
     private BigDecimal price;
 
@@ -106,12 +110,28 @@ public class HuobiSpotOrder {
         this.clientOrderId = clientOrderId;
     }
 
+    /**
+     * Convert current instance to a standard spot order instance.
+     * @return a standard spot order instance.
+     */
     public SpotOrder toSpotOrder() {
         SpotOrder spotOrder = new SpotOrder();
+        if(this.symbol!=null){
+            spotOrder.setSymbol(HuobiSymbol.of(this.symbol));
+        }
+        if(this.type!=null) {
+            spotOrder.setSide(HuobiOrderType.getSide(this.type));
+            spotOrder.setType(HuobiOrderType.getType(this.type));
+        }
 
+        spotOrder.setPrice(this.price);
+        spotOrder.setQuantity(this.amount);
 
-        // todo
+        Map<String, Object> extra = new HashMap<>();
+        spotOrder.setExtraInfo(extra);
+        extra.put("account-id", this.accountId);
+        extra.put("source", this.source);
+        extra.put("client-order-id", this.clientOrderId);
         return spotOrder;
     }
-
 }
