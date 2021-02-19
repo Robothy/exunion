@@ -2,7 +2,7 @@ package com.robothy.exunion.rest.spot;
 
 import com.robothy.exunion.core.exception.ExchangeException;
 import com.robothy.exunion.core.meta.SupportedExchange;
-import com.robothy.exunion.core.trade.spot.Order;
+import com.robothy.exunion.core.trade.spot.SpotOrder;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,33 +22,33 @@ public class SpotTradingServiceProxy implements SpotTradingService {
 
 
     @Override
-    public Order place(Order order) throws ExchangeException, IOException {
-        return this.instance.place(order);
+    public SpotOrder place(SpotOrder spotOrder) throws ExchangeException, IOException {
+        return this.instance.place(spotOrder);
     }
 
     @Override
-    public List<Order> place(List<Order> orders) throws ExchangeException, IOException {
-        return this.instance.place(orders);
+    public List<SpotOrder> place(List<SpotOrder> spotOrders) throws ExchangeException, IOException {
+        return this.instance.place(spotOrders);
     }
 
     @Override
-    public Order cancel(Order order) throws ExchangeException, IOException {
-        return this.instance.cancel(order);
+    public SpotOrder cancel(SpotOrder spotOrder) throws ExchangeException, IOException {
+        return this.instance.cancel(spotOrder);
     }
 
     @Override
-    public List<Order> cancel(List<Order> orders) throws ExchangeException, IOException {
-        return this.instance.cancel(orders);
+    public List<SpotOrder> cancel(List<SpotOrder> spotOrders) throws ExchangeException, IOException {
+        return this.instance.cancel(spotOrders);
     }
 
     @Override
-    public Order query(Order order) throws ExchangeException, IOException {
-        return this.instance.query(order);
+    public SpotOrder query(SpotOrder spotOrder) throws ExchangeException, IOException {
+        return this.instance.query(spotOrder);
     }
 
     @Override
-    public List<Order> query(List<Order> orders) throws ExchangeException, IOException {
-        return this.instance.query(orders);
+    public List<SpotOrder> query(List<SpotOrder> spotOrders) throws ExchangeException, IOException {
+        return this.instance.query(spotOrders);
     }
 
     @Override
