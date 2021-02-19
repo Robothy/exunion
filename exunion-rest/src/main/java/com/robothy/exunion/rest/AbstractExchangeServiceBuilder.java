@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
@@ -101,9 +102,8 @@ public abstract class AbstractExchangeServiceBuilder<T> {
      * Set the API server. If this property doesn't set, the {@link SupportedExchange#getDefaultApiServer()} will be used.
      *
      * @param apiServer the API server url. For example: https://api.sample.com
-     *
      */
-    public T apiServer(String apiServer){
+    public T apiServer(String apiServer) {
         checkExchange();
         checkAbstractExchangeService("API Server");
         this.abstractExchangeService.setApiServer(apiServer);
@@ -111,13 +111,13 @@ public abstract class AbstractExchangeServiceBuilder<T> {
     }
 
     /**
-     * Set the executor that execute the requests. If this property doesn't set,
+     * Set the executor service that execute the requests. If this property doesn't set,
      * a single thread executor will be set.
      * {@link Executors#newSingleThreadExecutor()}
      */
-    public T executor(Executor executor){
+    public T executor(ExecutorService executor) {
         this.abstractExchangeService.setExecutor(executor);
-        return (T)this;
+        return (T) this;
     }
 
     protected Object build() {
@@ -126,7 +126,7 @@ public abstract class AbstractExchangeServiceBuilder<T> {
             Objects.requireNonNull(this.abstractExchangeService.getJsonFactory(), "The JsonFactory is required to build an exchange service instance.");
 
             if (this.abstractExchangeService.getHttpTransport() == null) {
-                LOGGER.info("HttpTransport doesn't set, Use " + NetHttpTransport.class.getName() + " as default HttpTransport" );
+                LOGGER.info("HttpTransport doesn't set, Use " + NetHttpTransport.class.getName() + " as default HttpTransport");
                 this.abstractExchangeService.setHttpTransport(new NetHttpTransport());
             }
 
@@ -134,11 +134,11 @@ public abstract class AbstractExchangeServiceBuilder<T> {
             JsonFactory jsonFactory = this.abstractExchangeService.getJsonFactory();
             this.abstractExchangeService.requestFactory = httpTransport.createRequestFactory(request -> request.setParser(new JsonObjectParser(jsonFactory)));
 
-            if(this.abstractExchangeService.getApiServer()==null){
+            if (this.abstractExchangeService.getApiServer() == null) {
                 this.abstractExchangeService.setApiServer(this.abstractExchangeService.exchange().getDefaultApiServer());
             }
 
-            if (this.abstractExchangeService.getExecutor() == null){
+            if (this.abstractExchangeService.getExecutor() == null) {
                 this.abstractExchangeService.setExecutor(Executors.newSingleThreadExecutor());
             }
         }
