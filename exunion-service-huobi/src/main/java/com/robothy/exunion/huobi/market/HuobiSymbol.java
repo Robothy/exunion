@@ -18,4 +18,8 @@ public class HuobiSymbol extends Symbol {
         return new HuobiSymbol(base, quote);
     }
 
+    public static Symbol of(Symbol symbol){
+        return symbol == null ? null : of(symbol.getBase(), symbol.getQuote());
+    }
+
 }
