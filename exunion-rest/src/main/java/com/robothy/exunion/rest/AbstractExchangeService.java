@@ -6,6 +6,7 @@ import com.google.api.client.json.JsonFactory;
 import com.robothy.exunion.core.auth.Token;
 
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 /**
  * Define shared properties in different trading services.
@@ -23,6 +24,8 @@ public abstract class AbstractExchangeService implements ExchangeService {
     protected HttpRequestFactory requestFactory;
 
     private String apiServer;
+
+    private Executor executor;
 
     public Token getToken() {
         return token;
@@ -70,5 +73,13 @@ public abstract class AbstractExchangeService implements ExchangeService {
 
     public void setApiServer(String apiServer) {
         this.apiServer = apiServer;
+    }
+
+    public Executor getExecutor() {
+        return executor;
+    }
+
+    public void setExecutor(Executor executor) {
+        this.executor = executor;
     }
 }
