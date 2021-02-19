@@ -1,5 +1,7 @@
 package com.robothy.exunion.huobi.trade.spot;
 
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.json.JsonHttpContent;
 import com.robothy.exunion.core.exception.ExchangeException;
 import com.robothy.exunion.core.meta.SupportedExchange;
 import com.robothy.exunion.core.trade.spot.Order;
@@ -22,7 +24,9 @@ public class HuobiSpotService extends AbstractSpotTradingService {
 
     @Override
     public Order place(Order order) throws ExchangeException, IOException {
-        String.format("%s/v1/order/orders/place", SupportedExchange.HUOBI.getDefaultApiServer());
+        String url = String.format("%s/v1/order/orders/place", SupportedExchange.HUOBI.getDefaultApiServer());
+        JsonHttpContent content = new JsonHttpContent(super.getJsonFactory(), new HuobiOrder(order));
+        super.requestFactory.buildPostRequest(new GenericUrl(url), content);
         return null;
     }
 
