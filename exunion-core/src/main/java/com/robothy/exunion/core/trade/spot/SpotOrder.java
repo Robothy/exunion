@@ -73,19 +73,6 @@ public class SpotOrder {
     }
 
     /**
-     * order ID
-     */
-    private String orderId = null;
-
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
-    }
-
-    /**
      * Extra information
      */
     private Map<String, Object> extraInfo;

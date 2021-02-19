@@ -57,6 +57,19 @@ public class SpotOrderDetails extends SpotOrder {
     }
 
     /**
+     * order ID
+     */
+    private String orderId = null;
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
+    /**
      * The order status enumeration
      */
     public enum Status {
