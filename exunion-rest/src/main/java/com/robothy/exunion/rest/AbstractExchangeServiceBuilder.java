@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * @param <T> the builder that extents <code>AbstractExchangeServiceBuilder</code>.
@@ -108,6 +110,16 @@ public abstract class AbstractExchangeServiceBuilder<T> {
         return (T) this;
     }
 
+    /**
+     * Set the executor that execute the requests. If this property doesn't set,
+     * a single thread executor will be set.
+     * {@link Executors#newSingleThreadExecutor()}
+     */
+    public T executor(Executor executor){
+        this.abstractExchangeService.setExecutor(executor);
+        return (T)this;
+    }
+
     protected Object build() {
         checkExchange();
         if (this.abstractExchangeService != null) {
@@ -124,6 +136,10 @@ public abstract class AbstractExchangeServiceBuilder<T> {
 
             if(this.abstractExchangeService.getApiServer()==null){
                 this.abstractExchangeService.setApiServer(this.abstractExchangeService.exchange().getDefaultApiServer());
+            }
+
+            if (this.abstractExchangeService.getExecutor() == null){
+                this.abstractExchangeService.setExecutor(Executors.newSingleThreadExecutor());
             }
         }
         return this;

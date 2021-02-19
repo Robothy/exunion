@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 class AbstractExchangeServiceBuilderTest {
 
@@ -102,6 +104,21 @@ class AbstractExchangeServiceBuilderTest {
                 .build();
         Assertions.assertNotNull(instance);
         Assertions.assertNotNull(builder.abstractExchangeService.getRequestFactory());
+    }
+
+    @Test
+    void executor(){
+        builder.exchange(SupportedExchange.HUOBI, DepthService.class)
+                .jsonFactory(new JacksonFactory())
+                .build();
+        Assertions.assertNotNull(builder.abstractExchangeService.getExecutor());
+
+        Executor executor = Executors.newCachedThreadPool();
+        builder.exchange(SupportedExchange.HUOBI, DepthService.class)
+                .executor(executor)
+                .jsonFactory(new JacksonFactory())
+                .build();
+        Assertions.assertSame(executor, builder.abstractExchangeService.getExecutor());
     }
 }
 
