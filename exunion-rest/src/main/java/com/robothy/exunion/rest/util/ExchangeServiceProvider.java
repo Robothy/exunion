@@ -39,13 +39,9 @@ public class ExchangeServiceProvider {
             List<VersionedService> services = new ArrayList<>();
             while (it.hasNext()) {
                 ExchangeService exchangeService = it.next();
-
-                for (Class<?> i : exchangeService.getClass().getInterfaces()) {
-                    if (i == clazz) {
-                        Version version = i.getAnnotation(Version.class);
-                        services.add(new VersionedService(version == null ? "1.0" : version.value(), exchangeService));
-                        break;
-                    }
+                if (clazz.isAssignableFrom(exchangeService.getClass())) {
+                    Version version = it.getClass().getAnnotation(Version.class);
+                    services.add(new VersionedService(version == null ? "1.0" : version.value(), exchangeService));
                 }
             }
 
