@@ -70,6 +70,19 @@ public class SpotOrderDetails extends SpotOrder {
     }
 
     /**
+     * a util method that help to copy properties from a spot order instance to spot order detail instance.
+     * @param spotOrder a spot order instance
+     */
+    public void copyPropertiesFromSpotOrder(SpotOrder spotOrder){
+        this.setSide(spotOrder.getSide());
+        this.setType(spotOrder.getType());
+        this.setSymbol(spotOrder.getSymbol());
+        this.setPrice(spotOrder.getPrice());
+        this.setQuantity(spotOrder.getQuantity());
+        this.setExtraInfo(spotOrder.getExtraInfo());
+    }
+
+    /**
      * The order status enumeration
      */
     public enum Status {

@@ -1,1 +1,2 @@
 com.robothy.exunion.huobi.market.HuobiDepthService
+com.robothy.exunion.huobi.trade.spot.HuobiSpotService

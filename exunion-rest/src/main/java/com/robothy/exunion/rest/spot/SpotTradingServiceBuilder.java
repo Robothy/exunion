@@ -56,4 +56,13 @@ public class SpotTradingServiceBuilder extends AbstractExchangeServiceBuilder<Sp
                     "so you are not required and cannot set the " + property + " to build this trading service.");
         }
     }
+
+    /**
+     * Create a new SpotTradingServiceBuilder instance.
+     * @return created SpotTradingServiceBuilder instance.
+     */
+    public static SpotTradingServiceBuilder create(){
+        return new SpotTradingServiceBuilder();
+    }
+
 }
