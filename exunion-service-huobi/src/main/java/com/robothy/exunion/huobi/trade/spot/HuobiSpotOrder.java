@@ -1,33 +1,32 @@
 package com.robothy.exunion.huobi.trade.spot;
 
 import com.google.api.client.util.Key;
-import com.robothy.exunion.core.trade.spot.Order;
+import com.robothy.exunion.core.trade.spot.SpotOrder;
 import com.robothy.exunion.huobi.market.HuobiSymbol;
 
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Map;
 
-public class HuobiOrder {
+public class HuobiSpotOrder {
 
-    public HuobiOrder() {
+    public HuobiSpotOrder() {
     }
 
     /**
      * Create an HhuobiOrder instance by Order.
      * @param order the standard order.
      */
-    public HuobiOrder(Order order) {
+    public HuobiSpotOrder(SpotOrder order) {
         if(null == order) return;
         Map<String, Object> extra = order.getExtraInfo() == null ? Collections.emptyMap() : order.getExtraInfo();
-        this.accountId = (String) extra.get("accountId");
+        this.accountId = (String) extra.get("account-id");
         this.symbol = order.getSymbol() == null ? null : HuobiSymbol.of(order.getSymbol()).toString();
         this.type = (order.getSide() == null || order.getType() == null) ? null : HuobiOrderType.of(order.getSide(), order.getType());
         this.amount = order.getQuantity();
         this.price = order.getPrice();
         this.source = (String) extra.get("source");
         this.clientOrderId = (String) extra.get("client-order-id");
-        this.stopPrice = extra.get("stop-price") instanceof BigDecimal ? (BigDecimal) extra.get("stop-price") : new BigDecimal(extra.get("stop-price").toString());
     }
 
     @Key("account-id")
@@ -50,12 +49,6 @@ public class HuobiOrder {
 
     @Key("client-order-id")
     private String clientOrderId;
-
-    @Key("stop-price")
-    private BigDecimal stopPrice;
-
-    @Key("operator")
-    private String operator;
 
     public String getAccountId() {
         return accountId;
@@ -113,26 +106,12 @@ public class HuobiOrder {
         this.clientOrderId = clientOrderId;
     }
 
-    public BigDecimal getStopPrice() {
-        return stopPrice;
-    }
+    public SpotOrder toSpotOrder() {
+        SpotOrder spotOrder = new SpotOrder();
 
-    public void setStopPrice(BigDecimal stopPrice) {
-        this.stopPrice = stopPrice;
-    }
 
-    public String getOperator() {
-        return operator;
-    }
-
-    public void setOperator(String operator) {
-        this.operator = operator;
-    }
-
-    public Order toOrder() {
-        Order order = new Order();
         // todo
-        return order;
+        return spotOrder;
     }
 
 }
