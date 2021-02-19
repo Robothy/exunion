@@ -8,6 +8,11 @@ public enum Currency {
 
     USDT,
 
-    LTC
+    LTC,
 
+    HT,
+
+    HUSD,
+
+    PNT
 }
