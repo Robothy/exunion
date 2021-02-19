@@ -1,7 +1,7 @@
 package com.robothy.exunion.rest.spot;
 
 import com.robothy.exunion.core.exception.ExchangeException;
-import com.robothy.exunion.core.trade.spot.Order;
+import com.robothy.exunion.core.trade.spot.SpotOrder;
 import com.robothy.exunion.rest.ExchangeService;
 
 import java.io.IOException;
@@ -12,16 +12,16 @@ import java.util.List;
  */
 public interface SpotTradingService extends ExchangeService {
 
-    Order place(Order order) throws ExchangeException, IOException;
+    SpotOrder place(SpotOrder spotOrder) throws ExchangeException, IOException;
 
-    List<Order> place(List<Order> orders) throws ExchangeException, IOException;
+    List<SpotOrder> place(List<SpotOrder> spotOrders) throws ExchangeException, IOException;
 
-    Order cancel(Order order) throws ExchangeException, IOException;
+    SpotOrder cancel(SpotOrder spotOrder) throws ExchangeException, IOException;
 
-    List<Order> cancel(List<Order> orders) throws ExchangeException, IOException;
+    List<SpotOrder> cancel(List<SpotOrder> spotOrders) throws ExchangeException, IOException;
 
-    Order query(Order order) throws ExchangeException, IOException;
+    SpotOrder query(SpotOrder spotOrder) throws ExchangeException, IOException;
 
-    List<Order> query(List<Order> orders) throws ExchangeException, IOException;
+    List<SpotOrder> query(List<SpotOrder> spotOrders) throws ExchangeException, IOException;
 
 }
