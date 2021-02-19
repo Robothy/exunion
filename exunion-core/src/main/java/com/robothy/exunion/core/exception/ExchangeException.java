@@ -11,6 +11,7 @@ public class ExchangeException extends Exception {
     private ExchangeErrorMessage exchangeErrorMessage;
 
     public ExchangeException(ExchangeErrorMessage exchangeErrorMessage){
+        super(exchangeErrorMessage.message());
         this.exchangeErrorMessage = exchangeErrorMessage;
     }
 
@@ -18,11 +19,7 @@ public class ExchangeException extends Exception {
         super(message);
     }
 
-    public ExchangeErrorMessage getTradingErrorMessage() {
+    public ExchangeErrorMessage getExchangeErrorMessage() {
         return exchangeErrorMessage;
-    }
-
-    public void setTradingErrorMessage(ExchangeErrorMessage exchangeErrorMessage) {
-        this.exchangeErrorMessage = exchangeErrorMessage;
     }
 }
