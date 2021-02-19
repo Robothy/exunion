@@ -18,9 +18,16 @@ public class HuobiOrder {
      * @param order the standard order.
      */
     public HuobiOrder(Order order) {
+        if(null == order) return;
         Map<String, Object> extra = order.getExtraInfo() == null ? Collections.emptyMap() : order.getExtraInfo();
         this.accountId = (String) extra.get("accountId");
         this.symbol = order.getSymbol() == null ? null : HuobiSymbol.of(order.getSymbol()).toString();
+        this.type = (order.getSide() == null || order.getType() == null) ? null : HuobiOrderType.of(order.getSide(), order.getType());
+        this.amount = order.getQuantity();
+        this.price = order.getPrice();
+        this.source = (String) extra.get("source");
+        this.clientOrderId = (String) extra.get("client-order-id");
+        this.stopPrice = extra.get("stop-price") instanceof BigDecimal ? (BigDecimal) extra.get("stop-price") : new BigDecimal(extra.get("stop-price").toString());
     }
 
     @Key("account-id")
@@ -123,8 +130,9 @@ public class HuobiOrder {
     }
 
     public Order toOrder() {
+        Order order = new Order();
         // todo
-        return null;
+        return order;
     }
 
 }
