@@ -40,6 +40,14 @@ public class HuobiResponse {
         this.errMsg = errMsg;
     }
 
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
+    }
+
     public interface Keys {
         String STATUS = "status";
         String ERR_CODE = "err-code";

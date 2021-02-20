@@ -2,22 +2,28 @@ package com.robothy.exunion.huobi.trade.spot;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpContent;
+import com.google.api.client.http.HttpMethods;
 import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.HttpStatusCodes;
 import com.google.api.client.http.json.JsonHttpContent;
 import com.robothy.exunion.core.exception.ExchangeException;
 import com.robothy.exunion.core.meta.SupportedExchange;
 import com.robothy.exunion.core.trade.spot.SpotOrder;
 import com.robothy.exunion.core.trade.spot.SpotOrderDetails;
+import com.robothy.exunion.huobi.common.HuobiExchangeError;
+import com.robothy.exunion.huobi.common.HuobiResponse;
+import com.robothy.exunion.huobi.util.HuobiSignUtil;
 import com.robothy.exunion.rest.spot.AbstractSpotTradingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("rawtypes")
 public class HuobiSpotService extends AbstractSpotTradingService {
@@ -36,26 +42,71 @@ public class HuobiSpotService extends AbstractSpotTradingService {
 
     @Override
     public SpotOrderDetails place(SpotOrder spotOrder) throws ExchangeException, IOException {
+        Objects.requireNonNull(spotOrder, "Spot order cannot be null.");
         return this.execute(()->{
-            String url = String.format("%s/v1/order/spotOrders/place", SupportedExchange.HUOBI.getDefaultApiServer());
+            String url = sign(HttpMethods.POST, "/v1/order/orders/place", null);
             HuobiSpotOrder huobiSpotOrder = new HuobiSpotOrder(spotOrder);
+            if(LOGGER.isDebugEnabled()){
+                LOGGER.debug("Request URL: \n" + url);
+                LOGGER.debug("Request Data: \n" + getJsonFactory().toPrettyString(huobiSpotOrder));
+            }
+
             HttpContent content = new JsonHttpContent(super.getJsonFactory(), huobiSpotOrder);
             HttpResponse response = super.requestFactory.buildPostRequest(new GenericUrl(url), content).execute();
-            if(response.getStatusCode() != HttpStatusCodes.STATUS_CODE_OK){
-                LOGGER.error(getJsonFactory().fromInputStream(response.getContent(), String.class));
+            HuobiResponse huobiResponse = response.parseAs(HuobiResponse.class);
+
+            if(LOGGER.isDebugEnabled()){
+                LOGGER.debug("Parsed Response: \n" + getJsonFactory().toPrettyString(huobiResponse));
+            }
+
+            if(HuobiResponse.Status.ERROR.equals(huobiResponse.getStatus())){
+                throw new ExchangeException(HuobiExchangeError.of(huobiResponse.getErrCode(), huobiResponse.getErrMsg()));
             }
 
             SpotOrderDetails spotOrderDetails = new SpotOrderDetails();
             spotOrderDetails.copyPropertiesFromSpotOrder(spotOrder);
-            Map resp = response.parseAs(Map.class);
-            spotOrderDetails.setOrderId(resp.get("data").toString());
+            spotOrderDetails.setOrderId(huobiResponse.getData().toString());
             return spotOrderDetails;
         });
     }
 
+    /**
+     *
+     * @param spotOrders the spot orders to be placed
+     * @return the results of each order. <b>Notice: </b> some orders may successfully placed while others are not.
+     * The developer should check the result for each order by calling {@link HuobiResponse#getErrCode()}. It returns <code>null</code>
+     * means the order was placed successfully; otherwise, you may need to extract the error message through invoking
+     * ${@link HuobiResponse#getErrMsg()} and handle the error.
+     *
+     * @throws ExchangeException never threw, the developer needn't to handle it.
+     * @throws IOException when network occurs an error.
+     */
     @Override
     public List<SpotOrderDetails> place(List<SpotOrder> spotOrders) throws ExchangeException, IOException {
-        return null;
+        if(spotOrders == null || spotOrders.isEmpty()) throw new NullPointerException("The spotOrders cannot be empty.");
+        return this.execute(()->{
+            String url = sign(HttpMethods.POST, "/v1/order/batch-orders", null);
+            List<HuobiSpotOrder> huobiSpotOrders = spotOrders.stream().map(HuobiSpotOrder::new).collect(Collectors.toList());
+            if(LOGGER.isDebugEnabled()){
+                LOGGER.debug("Request URL: \n" + url);
+                LOGGER.debug("Request Data: \n" + getJsonFactory().toPrettyString(huobiSpotOrders));
+            }
+
+            JsonHttpContent content = new JsonHttpContent(getJsonFactory(), huobiSpotOrders);
+            HuobiSpotOrderDetail[] details = super.requestFactory.buildPostRequest(new GenericUrl(url), content)
+                    .execute()
+                    .parseAs(HuobiSpotOrderDetail[].class);
+
+            if(LOGGER.isDebugEnabled()){
+                LOGGER.debug("Parsed Data: \n" + getJsonFactory().toPrettyString(details));
+            }
+
+            List<SpotOrderDetails> result = new ArrayList<>(details.length);
+            for (HuobiSpotOrderDetail huobiSpotOrderDetail : details){
+                result.add(huobiSpotOrderDetail.toSpotOrderDetail());
+            }
+            return result;
+        });
     }
 
     @Override
@@ -88,8 +139,6 @@ public class HuobiSpotService extends AbstractSpotTradingService {
         return null;
     }
 
-
-
     private <V> V execute(Callable<V> task) throws ExchangeException, IOException {
         try {
             return getExecutor().submit(task).get();
@@ -98,7 +147,12 @@ public class HuobiSpotService extends AbstractSpotTradingService {
         } catch (ExecutionException e) {
             if(e.getCause() instanceof ExchangeException) throw (ExchangeException) e.getCause();
             if (e.getCause() instanceof IOException) throw (IOException) e.getCause();
-            throw new RuntimeException("Unknown exception occurred when execute HUOBI trading service.");
+            throw new RuntimeException("Unknown exception occurred when execute HUOBI trading service.", e);
         }
     }
+
+    private String sign(String method, String path, Map<String, Object> params){
+        return HuobiSignUtil.sign(method, getApiServer(), path, getToken().getApiKey(), getToken().getApiSecret(), params);
+    }
+
 }
