@@ -20,6 +20,7 @@ class HuobiDepthServiceTest {
             .exchange(SupportedExchange.HUOBI)
             .httpTransport(new NetHttpTransport())
             .jsonFactory(new JacksonFactory())
+            .apiServer("https://api.huobi.be")
             .build();
 
 

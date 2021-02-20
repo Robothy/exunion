@@ -2,23 +2,21 @@ package com.robothy.exunion.huobi.market;
 
 import com.google.api.client.util.Key;
 import com.robothy.exunion.core.market.Depth;
+import com.robothy.exunion.huobi.common.HuobiResponse;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class HuobiDepth {
+public class HuobiDepth extends HuobiResponse {
 
-    @Key("ch")
+    @Key(Keys.CH)
     private String ch;
 
-    @Key("status")
-    private String status;
-
-    @Key("ts")
+    @Key(Keys.TS)
     private long ts;
 
-    @Key("tick")
+    @Key(Keys.TICK)
     private Tick tick;
 
     public Depth toDepth() {
@@ -41,14 +39,6 @@ public class HuobiDepth {
         this.ch = ch;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public long getTs() {
         return ts;
     }
@@ -67,16 +57,16 @@ public class HuobiDepth {
 
     public static class Tick {
 
-        @Key("bids")
+        @Key(Keys.BIDS)
         private List<BigDecimal[]> bids;
 
-        @Key("asks")
+        @Key(Keys.ASKS)
         private List<BigDecimal[]> asks;
 
-        @Key("version")
+        @Key(Keys.VERSION)
         private long version;
 
-        @Key("ts")
+        @Key(Keys.TS)
         private long ts;
 
         public List<BigDecimal[]> getBids() {
@@ -110,5 +100,18 @@ public class HuobiDepth {
         public void setTs(long ts) {
             this.ts = ts;
         }
+
+        public interface Keys {
+            String BIDS = "bids";
+            String ASKS = "asks";
+            String VERSION = "version";
+            String TS = "ts";
+        }
+    }
+
+    public interface Keys{
+        String CH = "ch";
+        String TS = "ts";
+        String TICK = "tick";
     }
 }

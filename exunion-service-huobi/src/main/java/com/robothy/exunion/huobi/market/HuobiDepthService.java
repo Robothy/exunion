@@ -2,11 +2,12 @@ package com.robothy.exunion.huobi.market;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.HttpStatusCodes;
 import com.robothy.exunion.core.exception.ExchangeException;
 import com.robothy.exunion.core.market.Depth;
 import com.robothy.exunion.core.meta.SupportedExchange;
 import com.robothy.exunion.core.meta.Symbol;
+import com.robothy.exunion.huobi.common.HuobiExchangeError;
+import com.robothy.exunion.huobi.common.HuobiResponse;
 import com.robothy.exunion.rest.AbstractExchangeService;
 import com.robothy.exunion.rest.market.DepthService;
 import org.slf4j.Logger;
@@ -43,15 +44,20 @@ public class HuobiDepthService extends AbstractExchangeService
         else if (depth <= 10) depth = 10;
         else depth = 20;
 
-        String url = String.format("%s/market/depth?symbol=%s&type=step5&depth=%s", HUOBI.getDefaultApiServer(), symbol, depth);
+        String url = String.format("%s/market/depth?symbol=%s&type=step1&depth=%d", getApiServer(), symbol, depth);
+        LOGGER.debug("Request URL: \n" + url);
         HttpResponse result = requestFactory.buildGetRequest(new GenericUrl(url)).execute();
-        LOGGER.debug("Request URL: " + url);
-        if (result.getStatusCode() != HttpStatusCodes.STATUS_CODE_OK) {
-            throw new ExchangeException(result.parseAsString());
-        }
-        Depth ret = result.parseAs(HuobiDepth.class).toDepth();
-        ret.setSymbol(symbol);
 
+        HuobiDepth huobiDepth = result.parseAs(HuobiDepth.class);
+        if (HuobiResponse.Status.ERROR.equals(huobiDepth.getStatus())) {
+            throw new ExchangeException(HuobiExchangeError.of(huobiDepth.getErrCode(), huobiDepth.getErrMsg()));
+        }
+        if(LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Parsed Result: \n" + getJsonFactory().toPrettyString(huobiDepth));
+        }
+
+        Depth ret = huobiDepth.toDepth();
+        ret.setSymbol(symbol);
         ret.setBids(ret.getBids().stream().limit(depth).collect(Collectors.toList()));
         ret.setAsks(ret.getAsks().stream().limit(depth).collect(Collectors.toList()));
         return ret;

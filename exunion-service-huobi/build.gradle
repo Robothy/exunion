@@ -7,4 +7,5 @@ dependencies {
     implementation project(':exunion-rest')
     implementation "com.google.http-client:google-http-client:${libVersion['google-http-client.google-http-client']}"
     testImplementation "com.google.http-client:google-http-client-jackson2:${libVersion['google-http-client.google-http-client-jackson2']}"
+    testImplementation "ch.qos.logback:logback-classic:${libVersion['ch.qos.logback.logback-classic']}"
 }
