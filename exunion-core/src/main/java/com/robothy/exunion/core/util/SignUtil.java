@@ -17,7 +17,7 @@ public class SignUtil {
 
     public static final Map<String, SpinLock> LOCKS = new HashMap<>();
 
-    public static String sign(String algorithm, String secret, String message){
+    public static byte[] sign(String algorithm, String secret, String message){
         String key = algorithm + secret;
         if(!CACHE.containsKey(key)){
             synchronized (SignUtil.class){
@@ -38,7 +38,7 @@ public class SignUtil {
 
         LOCKS.get(key).lock();
         try {
-            return Hex.encodeHexString(CACHE.get(key).doFinal(message.getBytes(StandardCharsets.UTF_8)));
+            return CACHE.get(key).doFinal(message.getBytes(StandardCharsets.UTF_8));
         }finally {
             LOCKS.get(key).unlock();
         }
