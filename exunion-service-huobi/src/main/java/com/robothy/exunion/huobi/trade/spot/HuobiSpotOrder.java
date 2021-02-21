@@ -3,6 +3,7 @@ package com.robothy.exunion.huobi.trade.spot;
 import com.google.api.client.json.JsonString;
 import com.google.api.client.util.Key;
 import com.robothy.exunion.core.trade.spot.SpotOrder;
+import com.robothy.exunion.huobi.common.HuobiResponse;
 import com.robothy.exunion.huobi.market.HuobiSymbol;
 
 import java.math.BigDecimal;
@@ -10,7 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HuobiSpotOrder {
+public class HuobiSpotOrder extends HuobiResponse {
 
     public HuobiSpotOrder() {
     }
