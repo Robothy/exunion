@@ -51,6 +51,7 @@ public class HuobiSpotOrderCreateService extends AbstractHuobiAuthorizedExchange
             spotOrderDetails.setOrderId(huobiResponse.getData().toString());
             result = new Result<>(spotOrderDetails);
         }
+        result.setOrigin(huobiResponse);
         return result;
     }
 
@@ -75,7 +76,14 @@ public class HuobiSpotOrderCreateService extends AbstractHuobiAuthorizedExchange
 
         List<Result<SpotOrderDetails>> results = new ArrayList<>(details.length);
         for (HuobiSpotOrderDetail huobiSpotOrderDetail : details){
-            Result<SpotOrderDetails> result = new Result<>(huobiSpotOrderDetail.getErrCode(),  huobiSpotOrderDetail.getErrMsg());
+            Result<SpotOrderDetails> result = new Result<>();
+            if(null != huobiSpotOrderDetail.getErrCode()){
+                result.setStatus(Result.Status.ERROR);
+                result.setCode(huobiSpotOrderDetail.getErrCode());
+                result.setMessage(huobiSpotOrderDetail.getErrMsg());
+            }else{
+                result.setStatus(Result.Status.OK);
+            }
             result.set(huobiSpotOrderDetail.toSpotOrderDetail());
             result.setOrigin(huobiSpotOrderDetail);
             results.add(result);
