@@ -5,14 +5,18 @@ import com.google.api.client.http.HttpContent;
 import com.google.api.client.http.HttpMethods;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.json.JsonHttpContent;
+import com.robothy.exunion.core.annotation.Version;
 import com.robothy.exunion.core.exception.ExchangeException;
-import com.robothy.exunion.core.meta.SupportedExchange;
+import com.robothy.exunion.core.meta.Exchange;
 import com.robothy.exunion.core.trade.spot.SpotOrder;
 import com.robothy.exunion.core.trade.spot.SpotOrderDetails;
+import com.robothy.exunion.huobi.AbstractHuobiAuthorizedExchangeService;
+import com.robothy.exunion.huobi.meta.Huobi;
 import com.robothy.exunion.huobi.common.HuobiExchangeError;
 import com.robothy.exunion.huobi.common.HuobiResponse;
 import com.robothy.exunion.huobi.util.HuobiSignUtil;
-import com.robothy.exunion.rest.spot.AbstractSpotTradingService;
+import com.robothy.exunion.rest.spi.Options;
+import com.robothy.exunion.rest.spot.SpotTradingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,19 +29,20 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+@Version("1.1")
 @SuppressWarnings("rawtypes")
-public class HuobiSpotService extends AbstractSpotTradingService {
+public class HuobiSpotService extends AbstractHuobiAuthorizedExchangeService implements SpotTradingService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HuobiSpotService.class);
 
     @Override
-    public void init() {
-
+    public void init(Options options) {
+        super.init(options);
     }
 
     @Override
-    public SupportedExchange exchange() {
-        return SupportedExchange.HUOBI;
+    public Exchange exchange() {
+        return Huobi.SINGLETON;
     }
 
     @Override
@@ -48,15 +53,15 @@ public class HuobiSpotService extends AbstractSpotTradingService {
             HuobiSpotOrder huobiSpotOrder = new HuobiSpotOrder(spotOrder);
             if(LOGGER.isDebugEnabled()){
                 LOGGER.debug("Request URL: \n" + url);
-                LOGGER.debug("Request Data: \n" + getJsonFactory().toPrettyString(huobiSpotOrder));
+                LOGGER.debug("Request Data: \n" + options.getJsonFactory().toPrettyString(huobiSpotOrder));
             }
 
-            HttpContent content = new JsonHttpContent(super.getJsonFactory(), huobiSpotOrder);
-            HttpResponse response = super.requestFactory.buildPostRequest(new GenericUrl(url), content).execute();
+            HttpContent content = new JsonHttpContent(options.getJsonFactory(), huobiSpotOrder);
+            HttpResponse response = options.getHttpRequestFactory().buildPostRequest(new GenericUrl(url), content).execute();
             HuobiResponse huobiResponse = response.parseAs(HuobiResponse.class);
 
             if(LOGGER.isDebugEnabled()){
-                LOGGER.debug("Parsed Response: \n" + getJsonFactory().toPrettyString(huobiResponse));
+                LOGGER.debug("Parsed Response: \n" + options.getJsonFactory().toPrettyString(huobiResponse));
             }
 
             if(HuobiResponse.Status.ERROR.equals(huobiResponse.getStatus())){
@@ -89,16 +94,16 @@ public class HuobiSpotService extends AbstractSpotTradingService {
             List<HuobiSpotOrder> huobiSpotOrders = spotOrders.stream().map(HuobiSpotOrder::new).collect(Collectors.toList());
             if(LOGGER.isDebugEnabled()){
                 LOGGER.debug("Request URL: \n" + url);
-                LOGGER.debug("Request Data: \n" + getJsonFactory().toPrettyString(huobiSpotOrders));
+                LOGGER.debug("Request Data: \n" + options.getJsonFactory().toPrettyString(huobiSpotOrders));
             }
 
-            JsonHttpContent content = new JsonHttpContent(getJsonFactory(), huobiSpotOrders);
-            HuobiSpotOrderDetail[] details = super.requestFactory.buildPostRequest(new GenericUrl(url), content)
+            JsonHttpContent content = new JsonHttpContent(options.getJsonFactory(), huobiSpotOrders);
+            HuobiSpotOrderDetail[] details = options.getHttpRequestFactory().buildPostRequest(new GenericUrl(url), content)
                     .execute()
                     .parseAs(HuobiSpotOrderDetail[].class);
 
             if(LOGGER.isDebugEnabled()){
-                LOGGER.debug("Parsed Data: \n" + getJsonFactory().toPrettyString(details));
+                LOGGER.debug("Parsed Data: \n" + options.getJsonFactory().toPrettyString(details));
             }
 
             List<SpotOrderDetails> result = new ArrayList<>(details.length);
@@ -141,7 +146,7 @@ public class HuobiSpotService extends AbstractSpotTradingService {
 
     private <V> V execute(Callable<V> task) throws ExchangeException, IOException {
         try {
-            return getExecutor().submit(task).get();
+            return options.getExecutor().submit(task).get();
         } catch (InterruptedException e) {
             throw new ExchangeException("HUOBI spot trading operation is interrupted. message: " + e.getMessage());
         } catch (ExecutionException e) {
@@ -152,7 +157,7 @@ public class HuobiSpotService extends AbstractSpotTradingService {
     }
 
     private String sign(String method, String path, Map<String, Object> params){
-        return HuobiSignUtil.sign(method, getApiServer(), path, getToken().getApiKey(), getToken().getApiSecret(), params);
+        return HuobiSignUtil.sign(method, options.getApiServer(), path, options.getToken().getApiKey(), options.getToken().getApiSecret(), params);
     }
 
 }

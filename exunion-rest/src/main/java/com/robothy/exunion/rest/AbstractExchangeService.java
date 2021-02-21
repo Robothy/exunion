@@ -1,85 +1,45 @@
 package com.robothy.exunion.rest;
 
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.robothy.exunion.core.auth.Token;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonObjectParser;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.robothy.exunion.rest.spi.Options;
 
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
+import java.util.Optional;
 
 /**
- * Define shared properties in different trading services.
+ * Initialized common used options.
  */
 public abstract class AbstractExchangeService implements ExchangeService {
 
-    private Token token;
+    protected Options options;
 
-    private Map<String, Object> extraProperties;
+    @Override
+    public void init(Options options) {
+        this.options = Optional.ofNullable(options).orElse(new Options());
+        if(this.options.getApiServer() == null){
+            this.options.setApiServer(exchange().defaultApiServer());
+        }
 
-    private HttpTransport httpTransport;
+        if(this.options.getJsonFactory() == null){
+            this.options.setJsonFactory(new JacksonFactory());
+        }
 
-    private JsonFactory jsonFactory;
-
-    protected HttpRequestFactory requestFactory;
-
-    private String apiServer;
-
-    private ExecutorService executor;
-
-    public Token getToken() {
-        return token;
+        if(this.options.getHttpRequestFactory() == null){
+            this.options.setHttpRequestFactory(new NetHttpTransport().createRequestFactory(request -> request.setParser(new JsonObjectParser(new JacksonFactory()))));
+        }
     }
 
-    public void setToken(Token token) {
-        this.token = token;
+    public Options getOptions() {
+        return options;
     }
 
-    public Map<String, Object> getExtraProperties() {
-        return extraProperties;
-    }
-
-    public void setExtraProperties(Map<String, Object> extraProperties) {
-        this.extraProperties = extraProperties;
-    }
-
-    public HttpTransport getHttpTransport() {
-        return httpTransport;
-    }
-
-    public void setHttpTransport(HttpTransport httpTransport) {
-        this.httpTransport = httpTransport;
-    }
-
-    public JsonFactory getJsonFactory() {
-        return jsonFactory;
-    }
-
-    public void setJsonFactory(JsonFactory jsonFactory) {
-        this.jsonFactory = jsonFactory;
-    }
-
-    public HttpRequestFactory getRequestFactory() {
-        return requestFactory;
-    }
-
-    public void setRequestFactory(HttpRequestFactory requestFactory) {
-        this.requestFactory = requestFactory;
-    }
-
-    public String getApiServer() {
-        return apiServer;
-    }
-
-    public void setApiServer(String apiServer) {
-        this.apiServer = apiServer;
-    }
-
-    public ExecutorService getExecutor() {
-        return executor;
-    }
-
-    public void setExecutor(ExecutorService executor) {
-        this.executor = executor;
+    /**
+     * Update the options that will be effective immediately.
+     * @param options new options.
+     */
+    public void setOptions(Options options) {
+        this.options = options;
+        this.init(options);
     }
 }

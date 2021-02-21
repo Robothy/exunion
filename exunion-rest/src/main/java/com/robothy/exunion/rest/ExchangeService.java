@@ -1,7 +1,7 @@
 package com.robothy.exunion.rest;
 
-import com.robothy.exunion.core.meta.SupportedExchange;
-import com.robothy.exunion.rest.spot.SpotTradingServiceBuilder;
+import com.robothy.exunion.core.meta.Exchange;
+import com.robothy.exunion.rest.spi.Options;
 
 /**
  * All trading service class must implement this interface.
@@ -11,7 +11,7 @@ public interface ExchangeService {
     /**
      * @return the exchange that provide the trading service.
      */
-    SupportedExchange exchange();
+    Exchange exchange();
 
     /**
      * A hook invoked the service instance is created and exchange properties are set.
@@ -21,6 +21,6 @@ public interface ExchangeService {
      * This method will be invoked in the <code>build()</code> method of builder class.
      * <br>For example: {@link SpotTradingServiceBuilder#build()}
      */
-    default void init() {}
+    default void init(Options options) {}
 
 }

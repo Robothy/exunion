@@ -2,10 +2,19 @@ plugins {
     id 'exunion.lib-conventions'
 }
 
+repositories{
+    maven{
+        url = uri('https://maven.pkg.github.com/exunion/huobi_Java')
+        credentials githubCredential
+    }
+}
+
 dependencies {
     implementation project(':exunion-core')
     implementation project(':exunion-rest')
+    implementation "com.huobi.sdk:huobi-client:${libVersion['com.huobi.sdk.huobi-client']}"
     implementation "com.google.http-client:google-http-client:${libVersion['google-http-client.google-http-client']}"
+    implementation "com.google.http-client:google-http-client-jackson2:${libVersion['google-http-client.google-http-client-jackson2']}"
     testImplementation "com.google.http-client:google-http-client-jackson2:${libVersion['google-http-client.google-http-client-jackson2']}"
     testImplementation "ch.qos.logback:logback-classic:${libVersion['ch.qos.logback.logback-classic']}"
 }

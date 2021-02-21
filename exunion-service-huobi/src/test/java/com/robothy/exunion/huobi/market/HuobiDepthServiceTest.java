@@ -7,7 +7,6 @@ import com.robothy.exunion.core.market.Depth;
 import com.robothy.exunion.core.meta.Currency;
 import com.robothy.exunion.core.meta.SupportedExchange;
 import com.robothy.exunion.rest.market.DepthService;
-import com.robothy.exunion.rest.market.DepthServiceBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
