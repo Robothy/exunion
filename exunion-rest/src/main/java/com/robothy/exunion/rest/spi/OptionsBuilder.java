@@ -10,10 +10,14 @@ import java.util.concurrent.ExecutorService;
 
 public class OptionsBuilder {
 
-    private Options options;
+    private final Options options;
 
     public static OptionsBuilder create(){
         return new OptionsBuilder();
+    }
+
+    public OptionsBuilder(){
+        this.options = new Options();
     }
 
     public OptionsBuilder token(Token token){

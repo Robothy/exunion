@@ -30,7 +30,7 @@ public class ExchangeServiceProvider {
      * @param <T> the exchange service type. For example: {@link com.robothy.exunion.rest.market.DepthService}
      * @return an initialized exchange service instance.
      */
-    public static <T extends ExchangeService> T newInstance(Exchange exchange, Class<T> serviceClazz, Options options){
+    public static <T> T newInstance(Exchange exchange, Class<T> serviceClazz, Options options){
         // load all exchange services at once
         if(!CACHE.containsKey(exchange) || !CACHE.get(exchange).containsKey(serviceClazz)){
             ServiceLoader<ExchangeService> serviceLoader = ServiceLoader.load(ExchangeService.class);
@@ -70,7 +70,7 @@ public class ExchangeServiceProvider {
     /**
      * This method will invoke {@link ExchangeServiceProvider#newInstance(Exchange, Class, Options)} and pass <code>null</code> options.
      */
-    public static <T extends ExchangeService> T newInstance(Exchange exchange, Class<T> clazz){
+    public static <T> T newInstance(Exchange exchange, Class<T> clazz){
         return newInstance(exchange, clazz, null);
     }
 
