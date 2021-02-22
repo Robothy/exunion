@@ -8,6 +8,7 @@ import com.robothy.exunion.rest.spi.Options;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 public abstract class AbstractHuobiAuthorizedExchangeService extends AbstractHuobiExchangeService {
 
@@ -15,12 +16,14 @@ public abstract class AbstractHuobiAuthorizedExchangeService extends AbstractHuo
 
     @Override
     public void init(Options options) {
-        super.init(options);
+        Objects.requireNonNull(options.getToken(), "Token cannot be null for authorized service. Please set token in the options.");
         Objects.requireNonNull(options.getToken().getApiKey(), "The access key is required to visited Huobi authorized service.");
         Objects.requireNonNull(options.getToken().getApiSecret(), "The secret key is required to visited Huobi authorized service.");
+        super.init(options);
         huobiOptions = HuobiOptions.builder()
                 .apiKey(options.getToken().getApiKey())
                 .secretKey(options.getToken().getApiSecret())
+                .restHost(Optional.ofNullable(options.getApiServer()).orElse(exchange().defaultApiServer()))
                 .build();
     }
 
