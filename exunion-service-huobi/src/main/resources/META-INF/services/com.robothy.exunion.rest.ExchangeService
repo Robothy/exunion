@@ -1,3 +1,4 @@
 com.robothy.exunion.huobi.market.HuobiDepthService
 com.robothy.exunion.huobi.trade.spot.HuobiSpotService
 com.robothy.exunion.huobi.trade.spot.HuobiSpotOrderCreateService
+com.robothy.exunion.huobi.account.HuobiSpotAccountServiceAdapter

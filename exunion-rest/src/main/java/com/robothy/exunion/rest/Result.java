@@ -94,6 +94,10 @@ public class Result <T> {
         this.origin = origin;
     }
 
+    public boolean ok(){
+        return this.status == Status.OK;
+    }
+
     public enum Status {
         OK,
         ERROR

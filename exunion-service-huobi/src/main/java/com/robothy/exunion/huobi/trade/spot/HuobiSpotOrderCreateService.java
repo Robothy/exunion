@@ -1,47 +1,29 @@
 package com.robothy.exunion.huobi.trade.spot;
 
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpContent;
-import com.google.api.client.http.HttpMethods;
-import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.json.JsonHttpContent;
 import com.robothy.exunion.core.trade.spot.SpotOrder;
 import com.robothy.exunion.core.trade.spot.SpotOrderDetails;
 import com.robothy.exunion.huobi.AbstractHuobiAuthorizedExchangeService;
 import com.robothy.exunion.huobi.common.HuobiResponse;
 import com.robothy.exunion.rest.Result;
 import com.robothy.exunion.rest.spot.SpotOrderCreateService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class HuobiSpotOrderCreateService extends AbstractHuobiAuthorizedExchangeService implements SpotOrderCreateService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HuobiSpotOrderCreateService.class);
+    public static final String ORDER_PATH = "/v1/order/orders/place";
+
+    public static final String BATCH_ORDER_PATH = "/v1/order/batch-orders";
 
     @Override
     public Result<SpotOrderDetails> create(SpotOrder spotOrder) throws IOException {
         Objects.requireNonNull(spotOrder, "Spot order cannot be null.");
-        String url = signedUrl(HttpMethods.POST, "/v1/order/orders/place", null);
         HuobiSpotOrder huobiSpotOrder = new HuobiSpotOrder(spotOrder);
-        if(LOGGER.isDebugEnabled()){
-            LOGGER.debug("Request URL: \n" + url);
-            LOGGER.debug("Request Data: \n" + options.getJsonFactory().toPrettyString(huobiSpotOrder));
-        }
-
-        HttpContent content = new JsonHttpContent(options.getJsonFactory(), huobiSpotOrder);
-        HttpResponse response = options.getHttpRequestFactory().buildPostRequest(new GenericUrl(url), content).execute();
-        HuobiResponse huobiResponse = response.parseAs(HuobiResponse.class);
-
-        if(LOGGER.isDebugEnabled()){
-            LOGGER.debug("Parsed Response: \n" + options.getJsonFactory().toPrettyString(huobiResponse));
-        }
-
+        HuobiResponse huobiResponse = super.postWithSign(ORDER_PATH, huobiSpotOrder, HuobiResponse.class);
         Result<SpotOrderDetails> result;
         if(HuobiResponse.Status.ERROR.equals(huobiResponse.getStatus())){
             result = new Result<>(huobiResponse.getErrCode(), huobiResponse.getErrMsg());
@@ -56,39 +38,29 @@ public class HuobiSpotOrderCreateService extends AbstractHuobiAuthorizedExchange
     }
 
     @Override
-    public List<Result<SpotOrderDetails>> create(List<SpotOrder> spotOrders) throws IOException {
+    public Result<List<Result<SpotOrderDetails>>> create(List<SpotOrder> spotOrders) throws IOException {
         if(spotOrders == null || spotOrders.isEmpty()) throw new NullPointerException("The spotOrders cannot be empty.");
-        String url = signedUrl(HttpMethods.POST, "/v1/order/batch-orders", null);
         List<HuobiSpotOrder> huobiSpotOrders = spotOrders.stream().map(HuobiSpotOrder::new).collect(Collectors.toList());
-        if(LOGGER.isDebugEnabled()){
-            LOGGER.debug("Request URL: \n" + url);
-            LOGGER.debug("Request Data: \n" + options.getJsonFactory().toPrettyString(huobiSpotOrders));
-        }
+        HuobiResponse huobiResponse = super.postWithSign(BATCH_ORDER_PATH, huobiSpotOrders, HuobiResponse.class);
+        if(huobiResponse.getStatus().equals(HuobiResponse.Status.ERROR)){
+            return new Result<>(huobiResponse.getErrCode(), huobiResponse.getErrMsg());
+        }else {
+            String dataStr = options.getJsonFactory().toString(huobiResponse.getData());
+            HuobiSpotOrderDetail[] details = options.getJsonFactory().fromString(dataStr, HuobiSpotOrderDetail[].class);
 
-        JsonHttpContent content = new JsonHttpContent(options.getJsonFactory(), huobiSpotOrders);
-        HuobiSpotOrderDetail[] details = options.getHttpRequestFactory().buildPostRequest(new GenericUrl(url), content)
-                .execute()
-                .parseAs(HuobiSpotOrderDetail[].class);
-
-        if(LOGGER.isDebugEnabled()){
-            LOGGER.debug("Parsed Data: \n" + options.getJsonFactory().toPrettyString(details));
+            return new Result<>(Stream.of(details).map(detail -> {
+                Result<SpotOrderDetails> result = new Result<>();
+                if(null != detail.getErrCode()){
+                    result.setStatus(Result.Status.ERROR);
+                    result.setCode(detail.getErrCode());
+                    result.setMessage(detail.getErrMsg());
+                }else{
+                    result.setStatus(Result.Status.OK);
+                }
+                result.set(detail.toSpotOrderDetail());
+                result.setOrigin(detail);
+                return result;
+            }).collect(Collectors.toList()), huobiResponse);
         }
-
-        List<Result<SpotOrderDetails>> results = new ArrayList<>(details.length);
-        for (HuobiSpotOrderDetail huobiSpotOrderDetail : details){
-            Result<SpotOrderDetails> result = new Result<>();
-            if(null != huobiSpotOrderDetail.getErrCode()){
-                result.setStatus(Result.Status.ERROR);
-                result.setCode(huobiSpotOrderDetail.getErrCode());
-                result.setMessage(huobiSpotOrderDetail.getErrMsg());
-            }else{
-                result.setStatus(Result.Status.OK);
-            }
-            result.set(huobiSpotOrderDetail.toSpotOrderDetail());
-            result.setOrigin(huobiSpotOrderDetail);
-            results.add(result);
-        }
-        return results;
     }
-
 }

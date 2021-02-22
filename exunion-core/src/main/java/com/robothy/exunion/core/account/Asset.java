@@ -4,18 +4,22 @@ import java.math.BigDecimal;
 
 public class Asset {
 
-    private String symbol;
-
     private BigDecimal freeAmount;
 
     private BigDecimal lockedAmount;
 
-    public String getSymbol() {
-        return symbol;
+    private String currency;
+
+    public Asset(String currency){
+        this.currency = currency;
     }
 
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     public BigDecimal getFreeAmount() {
