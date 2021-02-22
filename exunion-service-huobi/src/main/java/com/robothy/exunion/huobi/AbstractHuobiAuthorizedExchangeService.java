@@ -1,6 +1,7 @@
 package com.robothy.exunion.huobi;
 
 import com.google.api.client.http.HttpMethods;
+import com.huobi.constant.HuobiOptions;
 import com.robothy.exunion.huobi.util.HuobiSignUtil;
 import com.robothy.exunion.rest.spi.Options;
 
@@ -10,11 +11,17 @@ import java.util.Objects;
 
 public abstract class AbstractHuobiAuthorizedExchangeService extends AbstractHuobiExchangeService {
 
+    protected HuobiOptions huobiOptions;
+
     @Override
     public void init(Options options) {
         super.init(options);
         Objects.requireNonNull(options.getToken().getApiKey(), "The access key is required to visited Huobi authorized service.");
         Objects.requireNonNull(options.getToken().getApiSecret(), "The secret key is required to visited Huobi authorized service.");
+        huobiOptions = HuobiOptions.builder()
+                .apiKey(options.getToken().getApiKey())
+                .secretKey(options.getToken().getApiSecret())
+                .build();
     }
 
     /**
