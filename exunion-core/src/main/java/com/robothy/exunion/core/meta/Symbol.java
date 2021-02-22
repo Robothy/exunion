@@ -4,37 +4,33 @@ import java.util.Objects;
 
 public class Symbol {
 
-    private Currency base;
+    private String base;
 
-    private Currency quote;
+    private String quote;
 
-    public Symbol(Currency base, Currency quote) {
+    public Symbol(String base, String quote) {
         this.base = base;
         this.quote = quote;
     }
 
-    public Currency getBase() {
+    public String getBase() {
         return base;
     }
 
-    public void setBase(Currency base) {
+    public void setBase(String base) {
         this.base = base;
     }
 
-    public Currency getQuote() {
+    public String getQuote() {
         return quote;
     }
 
-    public void setQuote(Currency quote) {
+    public void setQuote(String quote) {
         this.quote = quote;
     }
 
-    public static Symbol of(Currency base, Currency quote){
-        return new Symbol(base, quote);
-    }
-
     public static Symbol of(String base, String quote){
-        return new Symbol(Currency.valueOf(base), Currency.valueOf(quote));
+        return new Symbol(base, quote);
     }
 
     @Override
@@ -51,6 +47,6 @@ public class Symbol {
     public boolean equals(Object obj) {
         if(!(obj instanceof Symbol)) return false;
         Symbol o = (Symbol) obj;
-        return o == this || (o.base == this.base && o.quote == this.quote);
+        return o == this || (o.base.equals(this.base) && o.quote.equals(this.quote));
     }
 }

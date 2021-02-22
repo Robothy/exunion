@@ -1,18 +1,13 @@
 package com.robothy.exunion.core.meta;
 
-public enum Currency {
+public interface Currency {
 
-    BTC,
+    String BTC = "BTC";
+    String ETH = "ETH";
+    String USDT = "USDT";
+    String LTC = "LTC";
+    String HT = "HT";
+    String HUSD = "HUSD";
+    String PNT = "PNT";
 
-    ETH,
-
-    USDT,
-
-    LTC,
-
-    HT,
-
-    HUSD,
-
-    PNT
 }
