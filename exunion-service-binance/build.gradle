@@ -1,0 +1,9 @@
+plugins {
+    id 'exunion.lib-conventions'
+}
+
+dependencies {
+    implementation project(':exunion-core')
+    implementation project(':exunion-rest')
+    implementation "com.binance.api:binance-api-client:${libVersion['com.binance.api.binance-api-client']}"
+}

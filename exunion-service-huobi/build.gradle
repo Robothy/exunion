@@ -2,13 +2,6 @@ plugins {
     id 'exunion.lib-conventions'
 }
 
-repositories{
-    maven{
-        url = uri('https://maven.pkg.github.com/exunion/huobi_Java')
-        credentials githubCredential
-    }
-}
-
 dependencies {
     implementation project(':exunion-core')
     implementation project(':exunion-rest')

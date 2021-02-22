@@ -1,3 +1,5 @@
 rootProject.name = 'exunion'
 
 include 'exunion-api', 'exunion-core', 'exunion-rest', 'exunion-service-huobi'
+include 'exunion-service-binance'
+

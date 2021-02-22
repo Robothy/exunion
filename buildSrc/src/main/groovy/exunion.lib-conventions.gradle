@@ -11,6 +11,13 @@ ext.githubCredential = {
     password = project.findProperty('github.packages.token')
 }
 
+repositories {
+    maven{
+        url = uri('https://maven.pkg.github.com/exunion/huobi_Java')
+        credentials githubCredential
+    }
+}
+
 publishing {
     publications {
         library(MavenPublication) {
