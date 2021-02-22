@@ -21,6 +21,6 @@ public interface SpotOrderCreateService {
      * @param spotOrders spot order list.
      * @return the operation result for each spot order.
      */
-    List<Result<SpotOrderDetails>> create(List<SpotOrder> spotOrders) throws IOException;
+    Result<List<Result<SpotOrderDetails>>> create(List<SpotOrder> spotOrders) throws IOException;
 
 }

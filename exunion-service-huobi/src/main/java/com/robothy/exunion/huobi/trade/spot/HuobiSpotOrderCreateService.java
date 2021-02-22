@@ -38,22 +38,29 @@ public class HuobiSpotOrderCreateService extends AbstractHuobiAuthorizedExchange
     }
 
     @Override
-    public List<Result<SpotOrderDetails>> create(List<SpotOrder> spotOrders) throws IOException {
+    public Result<List<Result<SpotOrderDetails>>> create(List<SpotOrder> spotOrders) throws IOException {
         if(spotOrders == null || spotOrders.isEmpty()) throw new NullPointerException("The spotOrders cannot be empty.");
         List<HuobiSpotOrder> huobiSpotOrders = spotOrders.stream().map(HuobiSpotOrder::new).collect(Collectors.toList());
-        HuobiSpotOrderDetail[] details = super.postWithSign(BATCH_ORDER_PATH, huobiSpotOrders, HuobiSpotOrderDetail[].class);
-        return Stream.of(details).map(detail -> {
-            Result<SpotOrderDetails> result = new Result<>();
-            if(null != detail.getErrCode()){
-                result.setStatus(Result.Status.ERROR);
-                result.setCode(detail.getErrCode());
-                result.setMessage(detail.getErrMsg());
-            }else{
-                result.setStatus(Result.Status.OK);
-            }
-            result.set(detail.toSpotOrderDetail());
-            result.setOrigin(detail);
-            return result;
-        }).collect(Collectors.toList());
+        HuobiResponse huobiResponse = super.postWithSign(BATCH_ORDER_PATH, huobiSpotOrders, HuobiResponse.class);
+        if(huobiResponse.getStatus().equals(HuobiResponse.Status.ERROR)){
+            return new Result<>(huobiResponse.getErrCode(), huobiResponse.getErrMsg());
+        }else {
+            String dataStr = options.getJsonFactory().toString(huobiResponse.getData());
+            HuobiSpotOrderDetail[] details = options.getJsonFactory().fromString(dataStr, HuobiSpotOrderDetail[].class);
+
+            return new Result<>(Stream.of(details).map(detail -> {
+                Result<SpotOrderDetails> result = new Result<>();
+                if(null != detail.getErrCode()){
+                    result.setStatus(Result.Status.ERROR);
+                    result.setCode(detail.getErrCode());
+                    result.setMessage(detail.getErrMsg());
+                }else{
+                    result.setStatus(Result.Status.OK);
+                }
+                result.set(detail.toSpotOrderDetail());
+                result.setOrigin(detail);
+                return result;
+            }).collect(Collectors.toList()), huobiResponse);
+        }
     }
 }
