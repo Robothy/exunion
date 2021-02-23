@@ -1,7 +1,6 @@
 # exunion
 
-[![Java CI with Gradle](https://github.com/Robothy/exunion/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/Robothy/exunion/actions/workflows/build.yml)
-
+[![build](https://github.com/Robothy/exunion/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/Robothy/exunion/actions/workflows/build.yml)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/8f2a3cdd2123424babc2a1d5e2806e01)](https://www.codacy.com/manual/robothyluo/exunion?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Robothy/exunion&amp;utm_campaign=Badge_Grade)
 
 exunion is a Java lib that aggregate the main cryptocurrency exchanges' API and provide uniform interfaces. 
