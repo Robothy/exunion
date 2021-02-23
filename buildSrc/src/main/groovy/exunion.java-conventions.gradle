@@ -5,6 +5,7 @@ plugins {
     // NOTE: external plugin version is specified in implementation dependency artifact of the project's build file
     id 'com.robothy.cn-repo'
     id 'java'
+    id 'jacoco'
 }
 
 repositories {
@@ -27,6 +28,13 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled false
+    }
 }
 
 tasks.compileJava {
