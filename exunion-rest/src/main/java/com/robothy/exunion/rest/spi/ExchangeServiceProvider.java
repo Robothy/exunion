@@ -39,7 +39,7 @@ public class ExchangeServiceProvider {
             List<VersionedService> services = new ArrayList<>();
             while (it.hasNext()){
                 ExchangeService service = it.next();
-                if(serviceClazz.isAssignableFrom(service.getClass())){
+                if(exchange.id().equals(service.exchange().id()) && serviceClazz.isAssignableFrom(service.getClass())){
                     Version version = service.getClass().getAnnotation(Version.class);
                     services.add(new VersionedService(version == null ? "1.0" : version.value(), service));
                 }
