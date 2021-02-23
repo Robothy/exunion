@@ -28,7 +28,7 @@ class HuobiSpotOrderCreateServiceTest {
 
     @Test
     void serviceExists(){
-        Assertions.assertNotNull(ExchangeServiceProvider.newInstance(Huobi.SINGLETON, SpotOrderCreateService.class, null));
+        Assertions.assertNotNull(ExchangeServiceProvider.newInstance(Huobi.SINGLETON, SpotOrderCreateService.class, options));
     }
 
     @Test
