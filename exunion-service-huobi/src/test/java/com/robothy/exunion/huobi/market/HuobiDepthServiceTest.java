@@ -21,6 +21,9 @@ import org.mockserver.model.HttpResponse;
 
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @MockServerSettings(ports = 8080, perTestSuite = true)
 @ExtendWith(MockServerExtension.class)
 class HuobiDepthServiceTest {
@@ -37,6 +40,7 @@ class HuobiDepthServiceTest {
 
     @Test
     void getDepth(MockServerClient serverClient) throws IOException {
+        assertNotNull(serverClient);
         serverClient.when(request)
                 .respond(
                         HttpResponse.response()
@@ -54,18 +58,19 @@ class HuobiDepthServiceTest {
                 );
 
         Depth depth = depthService.getDepth(HuobiSymbol.of(Currency.ETH, Currency.USDT)).get();
-        Assertions.assertNotNull(depth);
+        assertNotNull(depth);
         Assertions.assertEquals(Currency.ETH, depth.getSymbol().getBase());
         Assertions.assertEquals(Currency.USDT, depth.getSymbol().getQuote());
-        Assertions.assertNotNull(depth.getTimestamp());
-        Assertions.assertNotNull(depth.getAsks());
-        Assertions.assertNotNull(depth.getBids());
-        Assertions.assertTrue(depth.getAsks().get(0).getPrice().compareTo(depth.getBids().get(0).getPrice()) > 0);
+        assertNotNull(depth.getTimestamp());
+        assertNotNull(depth.getAsks());
+        assertNotNull(depth.getBids());
+        assertTrue(depth.getAsks().get(0).getPrice().compareTo(depth.getBids().get(0).getPrice()) > 0);
         serverClient.clear(request);
     }
 
     @Test
     void testGetDepth(MockServerClient serverClient) throws IOException {
+        assertNotNull(serverClient);
         serverClient.when(request).respond(
                 HttpResponse.response()
                 .withBody("{\n" +
@@ -82,34 +87,35 @@ class HuobiDepthServiceTest {
         );
 
         Result<Depth> result = depthService.getDepth(HuobiSymbol.of(Currency.ETH, Currency.BTC), 10);
-        Assertions.assertNotNull(result);
+        assertNotNull(result);
         Assertions.assertEquals(Result.Status.OK, result.getStatus());
         Assertions.assertNull(result.getCode());
         Assertions.assertNull(result.getMessage());
-        Assertions.assertNotNull(result.getOrigin());
-        Assertions.assertTrue(result.getOrigin() instanceof HuobiDepth);
+        assertNotNull(result.getOrigin());
+        assertTrue(result.getOrigin() instanceof HuobiDepth);
 
         Depth depth = result.get();
-        Assertions.assertNotNull(depth);
-        Assertions.assertTrue(depth.getAsks().size() <= 10);
-        Assertions.assertTrue(depth.getBids().size() <= 10);
+        assertNotNull(depth);
+        assertTrue(depth.getAsks().size() <= 10);
+        assertTrue(depth.getBids().size() <= 10);
         serverClient.clear(request);
     }
 
     @Test
     void getDepthWithInvalidSymbol(MockServerClient server) throws IOException {
+        assertNotNull(server);
         server.when(request).respond(
                 HttpResponse.response()
                 .withBody("{\"err-code\":\"invalid-parameter\",\"err-msg\":\"invalid symbol\",\"status\":\"error\",\"ts\":1614173004600}")
         );
 
         Result<Depth> result = depthService.getDepth(HuobiSymbol.of(Currency.BTC, Currency.BTC));
-        Assertions.assertNotNull(result);
+        assertNotNull(result);
         Assertions.assertEquals(Result.Status.ERROR, result.getStatus());
-        Assertions.assertNotNull(result.getOrigin());
-        Assertions.assertTrue(result.getOrigin() instanceof HuobiDepth);
-        Assertions.assertNotNull(result.getCode());
-        Assertions.assertNotNull(result.getMessage());
+        assertNotNull(result.getOrigin());
+        assertTrue(result.getOrigin() instanceof HuobiDepth);
+        assertNotNull(result.getCode());
+        assertNotNull(result.getMessage());
         server.clear(request);
     }
 }

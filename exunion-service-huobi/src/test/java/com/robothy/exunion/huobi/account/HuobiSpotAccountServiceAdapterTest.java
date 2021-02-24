@@ -22,13 +22,15 @@ import org.mockserver.model.MediaType;
 
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 @MockServerSettings(ports = 9090)
 @ExtendWith(MockServerExtension.class)
 class HuobiSpotAccountServiceAdapterTest {
 
     @Test
     void query(ClientAndServer server) throws IOException, InterruptedException {
-
+        assertNotNull(server);
         server.when(
                 HttpRequest.request()
                 .withMethod(HttpMethods.GET)
@@ -57,7 +59,7 @@ class HuobiSpotAccountServiceAdapterTest {
 
         SpotAccountService spotAccountService = ExchangeServiceProvider.newInstance(Huobi.SINGLETON, SpotAccountService.class, options);
         Result<SpotAccount> result = spotAccountService.query();
-        Assertions.assertNotNull(result);
+        assertNotNull(result);
         Assertions.assertTrue(result.ok());
     }
 }

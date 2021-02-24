@@ -50,7 +50,7 @@ class HuobiSpotOrderCreateServiceTest {
 
     @Test
     void create(MockServerClient mockServerClient) throws IOException {
-
+        assertNotNull(mockServerClient);
         mockServerClient.when(request.withPath(HuobiSpotOrderCreateService.ORDER_PATH))
                 .respond(HttpResponse.response().withBody("{\"data\":\"220086189003998\",\"status\":\"ok\"}"));
 
@@ -71,7 +71,7 @@ class HuobiSpotOrderCreateServiceTest {
 
     @Test
     void batchCreate(MockServerClient mockServerClient) throws IOException {
-
+        assertNotNull(mockServerClient);
         mockServerClient.when(
                 request.withPath(HuobiSpotOrderCreateService.BATCH_ORDER_PATH)
         ).respond(

@@ -28,6 +28,7 @@ class BinanceDepthServiceTest {
 
     @Test
     void getDepth(MockServerClient server) throws IOException {
+        assertNotNull(server);
         HttpRequest httpRequest = HttpRequest.request().withMethod("GET").withPath("/api/v1/depth");
         HttpResponse httpResponse = HttpResponse.response()
                 .withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
