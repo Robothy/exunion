@@ -26,7 +26,7 @@ import java.io.IOException;
 class HuobiDepthServiceTest {
 
     private final Options options = OptionsBuilder.create()
-            .apiServer("http://localhost")
+            .apiServer("http://localhost:8080")
             .build();
 
     private final HttpRequest request = HttpRequest.request()
@@ -61,6 +61,7 @@ class HuobiDepthServiceTest {
         Assertions.assertNotNull(depth.getAsks());
         Assertions.assertNotNull(depth.getBids());
         Assertions.assertTrue(depth.getAsks().get(0).getPrice().compareTo(depth.getBids().get(0).getPrice()) > 0);
+        serverClient.clear(request);
     }
 
     @Test
@@ -92,6 +93,7 @@ class HuobiDepthServiceTest {
         Assertions.assertNotNull(depth);
         Assertions.assertTrue(depth.getAsks().size() <= 10);
         Assertions.assertTrue(depth.getBids().size() <= 10);
+        serverClient.clear(request);
     }
 
     @Test
@@ -108,5 +110,6 @@ class HuobiDepthServiceTest {
         Assertions.assertTrue(result.getOrigin() instanceof HuobiDepth);
         Assertions.assertNotNull(result.getCode());
         Assertions.assertNotNull(result.getMessage());
+        server.clear(request);
     }
 }
