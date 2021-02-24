@@ -23,7 +23,7 @@ jobs:
         run: chmod +x gradlew
       - name: Execute task jacocoTestReport
         run: ./gradlew -Pgithub.username=Robothy -Pgithub.packages.token=${{secrets.GITHUB_TOKEN}} test jacocoTestReport
-      - name: Upload report.
+      - name: Upload report to codecov.io.
         run: |
-          export CODACY_PROJECT_TOKEN=${{secrets.CODACY_PROJECT_TOKEN}}
-          bash <(curl -Ls https://coverage.codacy.com/get.sh) report
+            export CODECOV_TOKEN=${{secrets.CODECOV_TOKEN}}
+            bash <(curl -s https://codecov.io/bash)
