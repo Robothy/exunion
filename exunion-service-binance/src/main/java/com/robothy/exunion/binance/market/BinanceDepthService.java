@@ -38,15 +38,15 @@ public class BinanceDepthService implements DepthService, ExchangeService {
 
     @Override
     public Result<Depth> getDepth(Symbol symbol, int limit) throws IOException {
-        try{
+        try {
             OrderBook orderBook = client.getOrderBook(symbol.getBase() + symbol.getQuote(), limit);
             Depth depth = new Depth();
             depth.setAsks(orderBook.getAsks().stream().map(entry -> new Depth.PriceQuotation(new BigDecimal(entry.getPrice()), new BigDecimal(entry.getQty()))).collect(Collectors.toList()));
-            depth.setBids(orderBook.getBids().stream().map(entry->new Depth.PriceQuotation(new BigDecimal(entry.getPrice()), new BigDecimal(entry.getQty()))).collect(Collectors.toList()));
+            depth.setBids(orderBook.getBids().stream().map(entry -> new Depth.PriceQuotation(new BigDecimal(entry.getPrice()), new BigDecimal(entry.getQty()))).collect(Collectors.toList()));
             depth.setSymbol(symbol);
             return new Result<>(depth, orderBook);
-        }catch (BinanceApiException e){
-            if(e.getError() != null){
+        } catch (BinanceApiException e) {
+            if (e.getError() != null) {
                 return new Result<>(String.valueOf(e.getError().getCode()), e.getError().getMsg());
             }
             throw new IOException(e.getCause());

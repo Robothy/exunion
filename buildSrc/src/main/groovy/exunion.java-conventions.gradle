@@ -22,8 +22,10 @@ ext {
 }
 
 dependencies {
-    testImplementation "org.junit.jupiter:junit-jupiter:${libVersion['org.junit.jupiter.junit-jupiter']}"
     implementation "org.slf4j:slf4j-api:${libVersion['org.slf4j.slf4j-api']}"
+    testImplementation "org.mockito:mockito-inline:${libVersion['org.mockito.mockito-inline']}"
+    testImplementation "org.junit.jupiter:junit-jupiter:${libVersion['org.junit.jupiter.junit-jupiter']}"
+    testImplementation "org.mock-server:mockserver-junit-jupiter:${libVersion['org.mock-server.mockserver-junit-jupiter']}"
 }
 
 test {
