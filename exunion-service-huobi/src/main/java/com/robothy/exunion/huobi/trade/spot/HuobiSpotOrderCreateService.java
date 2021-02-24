@@ -55,6 +55,10 @@ public class HuobiSpotOrderCreateService extends AbstractHuobiAuthorizedExchange
                     result.setCode(detail.getErrCode());
                     result.setMessage(detail.getErrMsg());
                 }else{
+                    SpotOrderDetails dtl = new SpotOrderDetails();
+                    dtl.copyPropertiesFromSpotOrder(detail.toSpotOrder());
+                    dtl.setOrderId(String.valueOf(detail.getOrderId()));
+                    result.setData(dtl);
                     result.setStatus(Result.Status.OK);
                 }
                 result.set(detail.toSpotOrderDetail());

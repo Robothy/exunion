@@ -1,5 +1,6 @@
 package com.robothy.exunion.huobi.trade.spot;
 
+import com.google.api.client.http.HttpMethods;
 import com.robothy.exunion.core.auth.Token;
 import com.robothy.exunion.core.meta.Currency;
 import com.robothy.exunion.core.meta.Symbol;
@@ -13,26 +14,46 @@ import com.robothy.exunion.rest.spi.OptionsBuilder;
 import com.robothy.exunion.rest.spot.SpotOrderCreateService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockserver.client.MockServerClient;
+import org.mockserver.junit.jupiter.MockServerExtension;
+import org.mockserver.junit.jupiter.MockServerSettings;
+import org.mockserver.model.HttpRequest;
+import org.mockserver.model.HttpResponse;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * set the preTestSuit = ture to make all of the tests shard the same MockServerClient instance,
+ * which improves the test performance.
+ */
+@MockServerSettings(ports = 8080, perTestSuite = true)
+@ExtendWith(MockServerExtension.class)
 class HuobiSpotOrderCreateServiceTest {
 
     Options options = OptionsBuilder.create()
-            .apiServer("https://api.huobi.be")
-            .token(new Token("fake-key", "fake-secret"))
+            .apiServer("http://localhost:8080")
+            .token(new Token("bewr5drtmh-1384f8dc-0ec5225d-4a44b", "155bc62c-8a165d1d-efaa8ad7-b9fda"))
             .build();
+
+    HttpRequest request = HttpRequest.request().withMethod(HttpMethods.POST);
 
     @Test
     void serviceExists(){
-        Assertions.assertNotNull(ExchangeServiceProvider.newInstance(Huobi.SINGLETON, SpotOrderCreateService.class, options));
+        assertNotNull(ExchangeServiceProvider.newInstance(Huobi.SINGLETON, SpotOrderCreateService.class, options));
     }
 
     @Test
-    void create() throws IOException {
+    void create(MockServerClient mockServerClient) throws IOException {
+
+        mockServerClient.when(request.withPath(HuobiSpotOrderCreateService.ORDER_PATH))
+                .respond(HttpResponse.response().withBody("{\"data\":\"220086189003998\",\"status\":\"ok\"}"));
+
         SpotOrderCreateService createService = ExchangeServiceProvider.newInstance(Huobi.SINGLETON, SpotOrderCreateService.class, options);
         SpotOrder spotOrder = SpotOrder.Builder.create()
                 .side(SpotOrder.Side.SELL)
@@ -40,34 +61,60 @@ class HuobiSpotOrderCreateServiceTest {
                 .quantity(new BigDecimal(10000))
                 .price(new BigDecimal("0.0001"))
                 .symbol(Symbol.of(Currency.PNT, Currency.BTC))
+                .extra("account-id", "3009896")
                 .build();
         Result<SpotOrderDetails> result = createService.create(spotOrder);
-        Assertions.assertNotNull(result);
-        Assertions.assertFalse(result.ok());
-        Assertions.assertEquals(Result.Status.ERROR, result.getStatus());
+        assertNotNull(result);
+        Assertions.assertTrue(result.ok());
+        Assertions.assertEquals(Result.Status.OK, result.getStatus());
     }
 
     @Test
-    void batchCreate() throws IOException {
+    void batchCreate(MockServerClient mockServerClient) throws IOException {
+
+        mockServerClient.when(
+                request.withPath(HuobiSpotOrderCreateService.BATCH_ORDER_PATH)
+        ).respond(
+                HttpResponse.response()
+                .withBody("{\"data\":[{\"order-id\":219645426002633,\"client-order-id\":\"\"},{\"client-order-id\":\"\",\"err-code\":\"validation-constraints-error\",\"err-msg\":\"Please enter a valid accountId.\"}],\"status\":\"ok\"}")
+        );
+
+
         SpotOrderCreateService createService = ExchangeServiceProvider.newInstance(Huobi.SINGLETON, SpotOrderCreateService.class, options);
         SpotOrder sell = SpotOrder.Builder.create()
                 .side(SpotOrder.Side.SELL)
                 .type(SpotOrder.Type.LIMIT)
                 .quantity(new BigDecimal(10000))
                 .price(new BigDecimal("0.0001"))
+                .extra("account-id", "3009896")
                 .symbol(Symbol.of(Currency.PNT, Currency.BTC))
                 .build();
 
+        // no account id
         SpotOrder buy = SpotOrder.Builder.create()
                 .side(SpotOrder.Side.BUY)
                 .type(SpotOrder.Type.LIMIT)
-                .quantity(new BigDecimal(10))
+                .quantity(new BigDecimal("1000"))
                 .price(new BigDecimal("1"))
                 .symbol(Symbol.of(Currency.BTC, Currency.USDT))
                 .build();
         Result<List<Result<SpotOrderDetails>>> result = createService.create(Arrays.asList(sell, buy));
-        Assertions.assertFalse(result.ok());
-        Assertions.assertNotNull(result.getCode());
-        Assertions.assertNotNull(result.getMessage());
+        assertNotNull(result);
+        assertTrue(result.ok());
+
+        List<Result<SpotOrderDetails>> resultList = result.get();
+        assertNotNull(resultList);
+        assertEquals(2, resultList.size());
+
+        Result<SpotOrderDetails> first = resultList.get(0);
+        assertNotNull(first);
+        assertTrue(first.ok());
+        assertNotNull(first.getData().getOrderId());
+
+        Result<SpotOrderDetails> second = resultList.get(1);
+        assertNotNull(second);
+        assertFalse(second.ok());
+        assertNotNull(second.getCode());
+        assertNotNull(second.getMessage());
     }
 }

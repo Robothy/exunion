@@ -7,8 +7,8 @@ import java.math.BigDecimal;
 
 public class HuobiSpotOrderDetail extends HuobiSpotOrder {
 
-    @Key(Keys.ID)
-    private String orderId;
+    @Key(Keys.ORDER_ID)
+    private Long orderId;
 
     @Key(Keys.ORDER_STATE)
     private Integer orderState;
@@ -31,7 +31,7 @@ public class HuobiSpotOrderDetail extends HuobiSpotOrder {
     public SpotOrderDetails toSpotOrderDetail(){
         SpotOrderDetails spotOrderDetails = new SpotOrderDetails();
         spotOrderDetails.copyPropertiesFromSpotOrder(this.toSpotOrder());
-        spotOrderDetails.setOrderId(this.orderId);
+        spotOrderDetails.setOrderId(String.valueOf(this.orderId));
         if(this.orderState != null){
             HuobiOrderStatus huobiOrderStatus = HuobiOrderStatus.of(this.orderState);
             if(null != huobiOrderStatus) spotOrderDetails.setStatus(huobiOrderStatus.getStatus());
@@ -41,11 +41,11 @@ public class HuobiSpotOrderDetail extends HuobiSpotOrder {
         return spotOrderDetails;
     }
 
-    public String getOrderId() {
+    public Long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(String orderId) {
+    public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
 
@@ -98,7 +98,7 @@ public class HuobiSpotOrderDetail extends HuobiSpotOrder {
     }
 
     interface Keys{
-        String ID = "id";
+        String ORDER_ID = "order-id";
         String ORDER_STATE = "order-state";
         String CREATED_AT = "created-at";
         String FILLED_AMOUNT = "filled-amount";

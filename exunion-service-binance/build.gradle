@@ -6,4 +6,8 @@ dependencies {
     implementation project(':exunion-core')
     implementation project(':exunion-rest')
     implementation "com.binance.api:binance-api-client:${libVersion['com.binance.api.binance-api-client']}"
+
+    testImplementation "com.google.http-client:google-http-client:${libVersion['google-http-client.google-http-client']}"
+    testImplementation "com.google.http-client:google-http-client-jackson2:${libVersion['google-http-client.google-http-client-jackson2']}"
+    testImplementation "ch.qos.logback:logback-classic:${libVersion['ch.qos.logback.logback-classic']}"
 }
