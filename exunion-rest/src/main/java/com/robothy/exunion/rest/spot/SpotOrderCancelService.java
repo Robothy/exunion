@@ -1,6 +1,5 @@
 package com.robothy.exunion.rest.spot;
 
-import com.robothy.exunion.core.trade.spot.SpotOrder;
 import com.robothy.exunion.core.trade.spot.SpotOrderDetails;
 import com.robothy.exunion.rest.Result;
 

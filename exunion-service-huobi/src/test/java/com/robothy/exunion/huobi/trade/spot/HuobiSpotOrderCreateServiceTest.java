@@ -1,7 +1,6 @@
 package com.robothy.exunion.huobi.trade.spot;
 
 import com.google.api.client.http.HttpMethods;
-import com.robothy.exunion.core.auth.Token;
 import com.robothy.exunion.core.meta.Currency;
 import com.robothy.exunion.core.meta.Symbol;
 import com.robothy.exunion.core.trade.spot.SpotOrder;
@@ -13,7 +12,6 @@ import com.robothy.exunion.rest.spi.ExchangeServiceProvider;
 import com.robothy.exunion.rest.spi.Options;
 import com.robothy.exunion.rest.spi.OptionsBuilder;
 import com.robothy.exunion.rest.spot.SpotOrderCreateService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockserver.client.MockServerClient;
@@ -27,7 +25,11 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 /**
  * set the preTestSuit = ture to make all of the tests shard the same MockServerClient instance,
@@ -42,7 +44,7 @@ class HuobiSpotOrderCreateServiceTest {
             .token(HuobiToken.INSTANCE)
             .build();
 
-    HttpRequest request = HttpRequest.request().withMethod(HttpMethods.POST);
+    private final HttpRequest request = HttpRequest.request().withMethod(HttpMethods.POST);
 
     @Test
     void serviceExists(){
@@ -66,8 +68,8 @@ class HuobiSpotOrderCreateServiceTest {
                 .build();
         Result<SpotOrderDetails> result = createService.create(spotOrder);
         assertNotNull(result);
-        Assertions.assertTrue(result.ok());
-        Assertions.assertEquals(Result.Status.OK, result.getStatus());
+        assertTrue(result.ok());
+        assertEquals(Result.Status.OK, result.getStatus());
     }
 
     @Test

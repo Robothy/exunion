@@ -45,7 +45,7 @@ public class HuobiSpotTradingAdapter extends AbstractHuobiAuthorizedExchangeServ
         Objects.requireNonNull(spotOrder.getExtraInfo(), "Extra Info shouldn't be null, the 'account-id' should be passed through extraInfo.");
         CreateOrderRequest createOrderRequest = CreateOrderRequest.builder()
                 .accountId(Long.valueOf(spotOrder.getExtraInfo().get("account-id").toString()))
-                .type(OrderTypeEnum.find(HuobiOrderType.of(spotOrder.getSide(), spotOrder.getType())))
+                .type(OrderTypeEnum.find(HuobiOrderTypeUtil.of(spotOrder.getSide(), spotOrder.getType())))
                 .build();
 
         Long orderId = this.tradeClient.createOrder(createOrderRequest);

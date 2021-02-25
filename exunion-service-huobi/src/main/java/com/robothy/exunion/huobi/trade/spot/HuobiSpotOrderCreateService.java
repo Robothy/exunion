@@ -8,6 +8,7 @@ import com.robothy.exunion.rest.Result;
 import com.robothy.exunion.rest.spot.SpotOrderCreateService;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -25,9 +26,9 @@ public class HuobiSpotOrderCreateService extends AbstractHuobiAuthorizedExchange
         HuobiSpotOrder huobiSpotOrder = new HuobiSpotOrder(spotOrder);
         HuobiResponse huobiResponse = super.postWithSign(ORDER_PATH, huobiSpotOrder, HuobiResponse.class);
         Result<SpotOrderDetails> result;
-        if(HuobiResponse.Status.ERROR.equals(huobiResponse.getStatus())){
+        if (HuobiResponse.Status.ERROR.equals(huobiResponse.getStatus())) {
             result = new Result<>(huobiResponse.getErrCode(), huobiResponse.getErrMsg());
-        }else{
+        } else {
             SpotOrderDetails spotOrderDetails = new SpotOrderDetails();
             spotOrderDetails.copyPropertiesFromSpotOrder(spotOrder);
             spotOrderDetails.setOrderId(huobiResponse.getData().toString());
@@ -39,22 +40,26 @@ public class HuobiSpotOrderCreateService extends AbstractHuobiAuthorizedExchange
 
     @Override
     public Result<List<Result<SpotOrderDetails>>> create(List<SpotOrder> spotOrders) throws IOException {
-        if(spotOrders == null || spotOrders.isEmpty()) throw new NullPointerException("The spotOrders cannot be empty.");
+        Objects.requireNonNull(spotOrders, "The spotOrders cannot be empty.");
+        if (spotOrders.isEmpty()) {
+            return new Result<>(new ArrayList<>());
+        }
+
         List<HuobiSpotOrder> huobiSpotOrders = spotOrders.stream().map(HuobiSpotOrder::new).collect(Collectors.toList());
         HuobiResponse huobiResponse = super.postWithSign(BATCH_ORDER_PATH, huobiSpotOrders, HuobiResponse.class);
-        if(huobiResponse.getStatus().equals(HuobiResponse.Status.ERROR)){
+        if (huobiResponse.getStatus().equals(HuobiResponse.Status.ERROR)) {
             return new Result<>(huobiResponse.getErrCode(), huobiResponse.getErrMsg());
-        }else {
+        } else {
             String dataStr = options.getJsonFactory().toString(huobiResponse.getData());
             HuobiSpotOrderDetail[] details = options.getJsonFactory().fromString(dataStr, HuobiSpotOrderDetail[].class);
 
             return new Result<>(Stream.of(details).map(detail -> {
                 Result<SpotOrderDetails> result = new Result<>();
-                if(null != detail.getErrCode()){
+                if (null != detail.getErrCode()) {
                     result.setStatus(Result.Status.ERROR);
                     result.setCode(detail.getErrCode());
                     result.setMessage(detail.getErrMsg());
-                }else{
+                } else {
                     SpotOrderDetails dtl = new SpotOrderDetails();
                     dtl.copyPropertiesFromSpotOrder(detail.toSpotOrder());
                     dtl.setOrderId(String.valueOf(detail.getOrderId()));

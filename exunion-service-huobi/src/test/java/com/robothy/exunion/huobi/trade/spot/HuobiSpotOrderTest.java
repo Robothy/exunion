@@ -13,6 +13,8 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 class HuobiSpotOrderTest {
 
     @Test
@@ -29,13 +31,14 @@ class HuobiSpotOrderTest {
 
         JsonFactory jsonFactory = new JacksonFactory();
         HuobiSpotOrder huobiSpotOrder = jsonFactory.fromString(json, HuobiSpotOrder.class);
-        Assertions.assertEquals(huobiSpotOrder.getAccountId(), "100009");
-        Assertions.assertEquals(huobiSpotOrder.getAmount(), new BigDecimal("10.1"));
-        Assertions.assertEquals(huobiSpotOrder.getPrice(), new BigDecimal("100.1"));
-        Assertions.assertEquals(huobiSpotOrder.getSource(), "api");
-        Assertions.assertEquals(huobiSpotOrder.getSymbol(), "ethusdt");
-        Assertions.assertEquals(huobiSpotOrder.getType(), "buy-limit");
-        Assertions.assertEquals(huobiSpotOrder.getClientOrderId(), "a0001");
+        assertNotNull(huobiSpotOrder);
+        assertEquals(huobiSpotOrder.getAccountId(), "100009");
+        assertEquals(huobiSpotOrder.getAmount(), new BigDecimal("10.1"));
+        assertEquals(huobiSpotOrder.getPrice(), new BigDecimal("100.1"));
+        assertEquals(huobiSpotOrder.getSource(), "api");
+        assertEquals(huobiSpotOrder.getSymbol(), "ethusdt");
+        assertEquals(huobiSpotOrder.getType(), "buy-limit");
+        assertEquals(huobiSpotOrder.getClientOrderId(), "a0001");
     }
 
     @Test
@@ -52,13 +55,14 @@ class HuobiSpotOrderTest {
         JsonFactory jsonFactory = new JacksonFactory();
         String json = jsonFactory.toPrettyString(huobiSpotOrder);
 
-        Assertions.assertNotNull(json);
-        Assertions.assertTrue(json.contains("account-id"));
-        Assertions.assertTrue(json.contains("amount"));
-        Assertions.assertTrue(json.contains("source"));
-        Assertions.assertTrue(json.contains("symbol"));
-        Assertions.assertTrue(json.contains("type"));
-        Assertions.assertTrue(json.contains("client-order-id"));
+        assertNotNull(json);
+        assertNotNull(json);
+        assertTrue(json.contains("account-id"));
+        assertTrue(json.contains("amount"));
+        assertTrue(json.contains("source"));
+        assertTrue(json.contains("symbol"));
+        assertTrue(json.contains("type"));
+        assertTrue(json.contains("client-order-id"));
     }
 
     @Test
@@ -73,16 +77,18 @@ class HuobiSpotOrderTest {
         huobiSpotOrder.setSymbol("btcusdt");
 
         SpotOrder spotOrder = huobiSpotOrder.toSpotOrder();
-        Assertions.assertEquals(new BigDecimal("10.12"), spotOrder.getQuantity());
-        Assertions.assertEquals(new BigDecimal("100.1"), spotOrder.getPrice());
-        Assertions.assertEquals(SpotOrder.Type.LIMIT, spotOrder.getType());
-        Assertions.assertEquals(SpotOrder.Side.SELL, spotOrder.getSide());
-        Assertions.assertEquals(Symbol.of(Currency.BTC, Currency.USDT), spotOrder.getSymbol());
+        assertNotNull(spotOrder);
+        assertEquals(new BigDecimal("10.12"), spotOrder.getQuantity());
+        assertEquals(new BigDecimal("100.1"), spotOrder.getPrice());
+        assertEquals(SpotOrder.Type.LIMIT, spotOrder.getType());
+        assertEquals(SpotOrder.Side.SELL, spotOrder.getSide());
+        assertEquals(Symbol.of(Currency.BTC, Currency.USDT), spotOrder.getSymbol());
 
         Map<String, Object> extra = spotOrder.getExtraInfo();
-        Assertions.assertEquals("10009", extra.get("account-id").toString());
-        Assertions.assertEquals("a0001", extra.get("client-order-id").toString());
-        Assertions.assertEquals("api", extra.get("source").toString());
+        assertNotNull(extra);
+        assertEquals("10009", extra.get("account-id").toString());
+        assertEquals("a0001", extra.get("client-order-id").toString());
+        assertEquals("api", extra.get("source").toString());
     }
 
     @Test
@@ -101,14 +107,14 @@ class HuobiSpotOrderTest {
         extra.put("source", "exunion-api");
         
         HuobiSpotOrder huobiSpotOrder = new HuobiSpotOrder(spotOrder);
-        Assertions.assertEquals("pnteth", huobiSpotOrder.getSymbol());
-        Assertions.assertEquals("buy-limit", huobiSpotOrder.getType());
-        Assertions.assertEquals(new BigDecimal("1.5"), huobiSpotOrder.getPrice());
-        Assertions.assertEquals(new BigDecimal("100"), huobiSpotOrder.getAmount());
+        assertEquals("pnteth", huobiSpotOrder.getSymbol());
+        assertEquals("buy-limit", huobiSpotOrder.getType());
+        assertEquals(new BigDecimal("1.5"), huobiSpotOrder.getPrice());
+        assertEquals(new BigDecimal("100"), huobiSpotOrder.getAmount());
 
-        Assertions.assertEquals("A123", huobiSpotOrder.getAccountId());
-        Assertions.assertEquals("H001", huobiSpotOrder.getClientOrderId());
-        Assertions.assertEquals("exunion-api", huobiSpotOrder.getSource());
+        assertEquals("A123", huobiSpotOrder.getAccountId());
+        assertEquals("H001", huobiSpotOrder.getClientOrderId());
+        assertEquals("exunion-api", huobiSpotOrder.getSource());
     }
 
 }

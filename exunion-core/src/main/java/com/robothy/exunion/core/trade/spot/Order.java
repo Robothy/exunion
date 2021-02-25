@@ -12,6 +12,55 @@ public class Order {
      */
     private Status status = null;
 
+    /**
+     * Order side, buy or sell
+     */
+    private Side side = null;
+
+    /**
+     * Order type, limit, market
+     */
+    private Type type = null;
+
+    /**
+     * symbol of this order, format: {base currency}_{quote currency}.
+     */
+    private Symbol symbol = null;
+
+    /**
+     * the quantity of base currency of this order
+     */
+    private BigDecimal quantity = null;
+    /**
+     * the price of this order
+     */
+    private BigDecimal price = null;
+
+    /**
+     * executed amount(quote currency).
+     */
+    private BigDecimal executedAmount;
+
+    /**
+     * executed quantity(base currency)
+     */
+    private BigDecimal executedQuantity;
+
+    /**
+     * order ID
+     */
+    private String orderId = null;
+
+    /**
+     * commission timestamp
+     */
+    private Long commissionTimestamp;
+
+    /**
+     * Extra information
+     */
+    private Map<String, Object> extraInfo;
+
     public Status getStatus() {
         return status;
     }
@@ -19,11 +68,6 @@ public class Order {
     public void setStatus(Status status) {
         this.status = status;
     }
-
-    /**
-     * Order side, buy or sell
-     */
-    private Side side = null;
 
     public Side getSide() {
         return side;
@@ -33,11 +77,6 @@ public class Order {
         this.side = side;
     }
 
-    /**
-     * Order type, limit, market
-     */
-    private Type type = null;
-
     public Type getType() {
         return type;
     }
@@ -45,11 +84,6 @@ public class Order {
     public void setType(Type type) {
         this.type = type;
     }
-
-    /**
-     * symbol of this order, format: {base currency}_{quote currency}.
-     */
-    private Symbol symbol = null;
 
     public Symbol getSymbol() {
         return symbol;
@@ -59,10 +93,6 @@ public class Order {
         this.symbol = symbol;
     }
 
-    /**
-     * the quantity of base currency of this order
-     */
-    private BigDecimal quantity = null;
 
     public BigDecimal getQuantity() {
         return quantity;
@@ -72,11 +102,6 @@ public class Order {
         this.quantity = quantity;
     }
 
-    /**
-     * the price of this order
-     */
-    private BigDecimal price = null;
-
     public BigDecimal getPrice() {
         return price;
     }
@@ -84,11 +109,6 @@ public class Order {
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
-
-    /**
-     * executed amount(quote currency).
-     */
-    private BigDecimal executedAmount;
 
     public BigDecimal getExecutedAmount() {
         return executedAmount;
@@ -98,11 +118,6 @@ public class Order {
         this.executedAmount = executedAmount;
     }
 
-    /**
-     * executed quantity(base currency)
-     */
-    private BigDecimal executedQuantity;
-
     public BigDecimal getExecutedQuantity() {
         return executedQuantity;
     }
@@ -110,11 +125,6 @@ public class Order {
     public void setExecutedQuantity(BigDecimal executedQuantity) {
         this.executedQuantity = executedQuantity;
     }
-
-    /**
-     * order ID
-     */
-    private String orderId = null;
 
     public String getOrderId() {
         return orderId;
@@ -124,11 +134,6 @@ public class Order {
         this.orderId = orderId;
     }
 
-    /**
-     * commission timestamp
-     */
-    private Long commissionTimestamp;
-
     public Long getCommissionTimestamp() {
         return commissionTimestamp;
     }
@@ -137,10 +142,7 @@ public class Order {
         this.commissionTimestamp = commissionTimestamp;
     }
 
-    /**
-     * Extra information
-     */
-    private Map<String, Object> extraInfo;
+
 
     public Map<String, Object> getExtraInfo() {
         return extraInfo;

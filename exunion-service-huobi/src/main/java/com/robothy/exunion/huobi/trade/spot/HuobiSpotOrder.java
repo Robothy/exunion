@@ -13,25 +13,6 @@ import java.util.Map;
 
 public class HuobiSpotOrder extends HuobiResponse {
 
-    public HuobiSpotOrder() {
-    }
-
-    /**
-     * Create an HhuobiOrder instance by Order.
-     * @param order the standard order.
-     */
-    public HuobiSpotOrder(SpotOrder order) {
-        if(null == order) return;
-        Map<String, Object> extra = order.getExtraInfo() == null ? Collections.emptyMap() : order.getExtraInfo();
-        this.accountId = (String) extra.get("account-id");
-        this.symbol = order.getSymbol() == null ? null : HuobiSymbol.of(order.getSymbol()).toString();
-        this.type = (order.getSide() == null || order.getType() == null) ? null : HuobiOrderType.of(order.getSide(), order.getType());
-        this.amount = order.getQuantity();
-        this.price = order.getPrice();
-        this.source = (String) extra.get("source");
-        this.clientOrderId = (String) extra.get("client-order-id");
-    }
-
     @Key("account-id")
     private String accountId;
 
@@ -54,6 +35,25 @@ public class HuobiSpotOrder extends HuobiResponse {
 
     @Key("client-order-id")
     private String clientOrderId;
+
+    public HuobiSpotOrder() {
+    }
+
+    /**
+     * Create an HhuobiOrder instance by Order.
+     * @param order the standard order.
+     */
+    public HuobiSpotOrder(SpotOrder order) {
+        if(null == order) return;
+        Map<String, Object> extra = order.getExtraInfo() == null ? Collections.emptyMap() : order.getExtraInfo();
+        this.accountId = (String) extra.get("account-id");
+        this.symbol = order.getSymbol() == null ? null : HuobiSymbol.of(order.getSymbol()).toString();
+        this.type = (order.getSide() == null || order.getType() == null) ? null : HuobiOrderTypeUtil.of(order.getSide(), order.getType());
+        this.amount = order.getQuantity();
+        this.price = order.getPrice();
+        this.source = (String) extra.get("source");
+        this.clientOrderId = (String) extra.get("client-order-id");
+    }
 
     public String getAccountId() {
         return accountId;
@@ -121,8 +121,8 @@ public class HuobiSpotOrder extends HuobiResponse {
             spotOrder.setSymbol(HuobiSymbol.of(this.symbol));
         }
         if(this.type!=null) {
-            spotOrder.setSide(HuobiOrderType.getSide(this.type));
-            spotOrder.setType(HuobiOrderType.getType(this.type));
+            spotOrder.setSide(HuobiOrderTypeUtil.getSide(this.type));
+            spotOrder.setType(HuobiOrderTypeUtil.getType(this.type));
         }
 
         spotOrder.setPrice(this.price);

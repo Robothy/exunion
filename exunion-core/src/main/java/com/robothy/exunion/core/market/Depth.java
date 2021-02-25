@@ -14,6 +14,18 @@ public class Depth {
     private List<PriceQuotation> bids = null;
 
     /**
+     * 报价（卖价）
+     */
+    private List<PriceQuotation> asks = null;
+
+    private Symbol symbol = null;
+
+    /**
+     * 时间戳
+     */
+    private Long timestamp = null;
+
+    /**
      * 投标价格（买价）
      */
     public List<PriceQuotation> getBids() {
@@ -30,11 +42,6 @@ public class Depth {
     public void setBids(List<PriceQuotation> bids) {
         this.bids = bids;
     }
-
-    /**
-     * 报价（卖价）
-     */
-    private List<PriceQuotation> asks = null;
 
     /**
      * 返回交易平台排序之后的卖单
@@ -56,7 +63,6 @@ public class Depth {
         this.asks = asks;
     }
 
-    private Symbol symbol = null;
 
     public Symbol getSymbol() {
         return symbol;
@@ -70,11 +76,6 @@ public class Depth {
     public void setSymbol(Symbol symbol) {
         this.symbol = symbol;
     }
-
-    /**
-     * 时间戳
-     */
-    private Long timestamp = null;
 
     /**
      * 时间戳
@@ -102,15 +103,20 @@ public class Depth {
 
         public static final Comparator<PriceQuotation> DESC = (a, b) -> b.price.compareTo(a.price);
 
-        public PriceQuotation(BigDecimal price, BigDecimal quantity) {
-            this.price = price;
-            this.quantity = quantity;
-        }
-
         /**
          * 价格
          */
         private BigDecimal price;
+
+        /**
+         * 数量
+         */
+        private BigDecimal quantity = null;
+
+        public PriceQuotation(BigDecimal price, BigDecimal quantity) {
+            this.price = price;
+            this.quantity = quantity;
+        }
 
         /**
          * 价格
@@ -125,11 +131,6 @@ public class Depth {
         public void setPrice(BigDecimal price) {
             this.price = price;
         }
-
-        /**
-         * 数量
-         */
-        private BigDecimal quantity = null;
 
         /**
          * set 数量

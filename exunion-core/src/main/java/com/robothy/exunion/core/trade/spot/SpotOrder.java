@@ -13,6 +13,32 @@ public class SpotOrder {
      */
     private Side side = null;
 
+    /**
+     * Order type, limit, market
+     */
+    private Type type = null;
+
+    /**
+     * symbol of this order, format: {base currency}_{quote currency}.
+     */
+    private Symbol symbol = null;
+
+    /**
+     * the quantity of base currency of this order
+     */
+    private BigDecimal quantity = null;
+
+    /**
+     * the price of this order
+     */
+    private BigDecimal price = null;
+
+    /**
+     * Extra information
+     */
+    private Map<String, Object> extraInfo;
+
+
     public Side getSide() {
         return side;
     }
@@ -20,11 +46,6 @@ public class SpotOrder {
     public void setSide(Side side) {
         this.side = side;
     }
-
-    /**
-     * Order type, limit, market
-     */
-    private Type type = null;
 
     public Type getType() {
         return type;
@@ -34,11 +55,6 @@ public class SpotOrder {
         this.type = type;
     }
 
-    /**
-     * symbol of this order, format: {base currency}_{quote currency}.
-     */
-    private Symbol symbol = null;
-
     public Symbol getSymbol() {
         return symbol;
     }
@@ -46,11 +62,6 @@ public class SpotOrder {
     public void setSymbol(Symbol symbol) {
         this.symbol = symbol;
     }
-
-    /**
-     * the quantity of base currency of this order
-     */
-    private BigDecimal quantity = null;
 
     public BigDecimal getQuantity() {
         return quantity;
@@ -60,11 +71,6 @@ public class SpotOrder {
         this.quantity = quantity;
     }
 
-    /**
-     * the price of this order
-     */
-    private BigDecimal price = null;
-
     public BigDecimal getPrice() {
         return price;
     }
@@ -72,11 +78,6 @@ public class SpotOrder {
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
-
-    /**
-     * Extra information
-     */
-    private Map<String, Object> extraInfo;
 
     public Map<String, Object> getExtraInfo() {
         return extraInfo;

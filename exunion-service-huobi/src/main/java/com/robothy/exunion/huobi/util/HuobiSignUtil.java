@@ -1,6 +1,6 @@
 package com.robothy.exunion.huobi.util;
 
-import com.robothy.exunion.core.util.SignAlgorithm;
+import com.robothy.exunion.core.util.SignAlgorithmConstants;
 import com.robothy.exunion.core.util.SignUtil;
 
 import java.io.UnsupportedEncodingException;
@@ -37,7 +37,7 @@ public class HuobiSignUtil {
 
         TreeMap<String, Object> sortedParams = params == null ? new TreeMap<>() : new TreeMap<>(params);
         sortedParams.put("AccessKeyId", accessKey);
-        sortedParams.put("SignatureMethod", SignAlgorithm.HmacSHA256);
+        sortedParams.put("SignatureMethod", SignAlgorithmConstants.HmacSHA256);
         sortedParams.put("SignatureVersion", 2);
         sortedParams.put("Timestamp", dateFormat.get().format(new Date()));
 
@@ -49,7 +49,7 @@ public class HuobiSignUtil {
         StringBuilder paramStr = mapToString(sortedParams);
         text.append(paramStr);
 
-        byte[] signedBytes = SignUtil.sign(SignAlgorithm.HmacSHA256, secretKey, text.toString());
+        byte[] signedBytes = SignUtil.sign(SignAlgorithmConstants.HmacSHA256, secretKey, text.toString());
         String sign = Base64.getEncoder().encodeToString(signedBytes);
 
         StringBuilder url = new StringBuilder();

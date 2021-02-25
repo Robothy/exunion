@@ -15,14 +15,14 @@ public enum HuobiMarketErrors implements ExchangeErrorMessage {
 
     ;
 
+    private String code;
+
+    private String message;
+
     HuobiMarketErrors(String code, String message){
         this.code = code;
         this.message = message;
     }
-
-    private String code;
-
-    private String message;
 
     @Override
     public String code() {

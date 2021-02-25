@@ -2,7 +2,7 @@ package com.robothy.exunion.huobi.trade.spot;
 
 import com.robothy.exunion.core.trade.spot.SpotOrder;
 
-public class HuobiOrderType {
+public class HuobiOrderTypeUtil {
 
     public static SpotOrder.Type getType(String huobiType) {
         return huobiType.contains("market") ? SpotOrder.Type.MARKET : SpotOrder.Type.LIMIT;

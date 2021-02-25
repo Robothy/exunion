@@ -3,7 +3,7 @@ package com.robothy.exunion.huobi.common;
 import com.robothy.exunion.core.meta.SupportedExchange;
 import com.robothy.exunion.core.trade.ExchangeErrorMessage;
 
-public class HuobiExchangeError {
+public class HuobiExchangeErrorMessageUtil {
 
     public static ExchangeErrorMessage of(String code, String msg){
         return new ExchangeErrorMessage() {

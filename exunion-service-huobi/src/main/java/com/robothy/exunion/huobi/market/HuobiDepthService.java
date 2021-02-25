@@ -26,7 +26,7 @@ public class HuobiDepthService extends AbstractExchangeService
     @Override
     public void init(Options options) {
         super.init(options);
-        if(super.options.getJsonFactory() == null) {
+        if (super.options.getJsonFactory() == null) {
             super.options.setJsonFactory(new JacksonFactory());
         }
     }
@@ -42,9 +42,10 @@ public class HuobiDepthService extends AbstractExchangeService
     }
 
     @Override
-    public Result<Depth> getDepth(Symbol symbol, int depth) throws IOException {
-        if (depth <= 5) depth = 5;
-        else if (depth <= 10) depth = 10;
+    public Result<Depth> getDepth(Symbol symbol, int originalDepth) throws IOException {
+        int depth;
+        if (originalDepth <= 5) depth = 5;
+        else if (originalDepth <= 10) depth = 10;
         else depth = 20;
 
         String url = String.format("%s/market/depth?symbol=%s&type=step1&depth=%d", options.getApiServer(), symbol, depth);
@@ -63,7 +64,7 @@ public class HuobiDepthService extends AbstractExchangeService
             result.setStatus(Result.Status.ERROR);
             result.setCode(huobiDepth.getErrCode());
             result.setMessage(huobiDepth.getErrMsg());
-        }else{
+        } else {
             Depth ret = huobiDepth.toDepth();
             ret.setSymbol(symbol);
             ret.setBids(ret.getBids().stream().limit(depth).collect(Collectors.toList()));

@@ -1,7 +1,5 @@
 package com.robothy.exunion.core.util;
 
-import org.apache.commons.codec.binary.Hex;
-
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;

@@ -75,8 +75,8 @@ public class ExchangeServiceProvider {
     }
 
     private static class VersionedService {
-        String version;
-        ExchangeService service;
+        private String version;
+        private ExchangeService service;
 
         VersionedService(String version, ExchangeService service) {
             this.version = version;
