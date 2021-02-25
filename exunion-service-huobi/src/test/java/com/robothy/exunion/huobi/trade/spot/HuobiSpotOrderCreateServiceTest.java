@@ -6,6 +6,7 @@ import com.robothy.exunion.core.meta.Currency;
 import com.robothy.exunion.core.meta.Symbol;
 import com.robothy.exunion.core.trade.spot.SpotOrder;
 import com.robothy.exunion.core.trade.spot.SpotOrderDetails;
+import com.robothy.exunion.huobi.HuobiToken;
 import com.robothy.exunion.huobi.meta.Huobi;
 import com.robothy.exunion.rest.Result;
 import com.robothy.exunion.rest.spi.ExchangeServiceProvider;
@@ -38,7 +39,7 @@ class HuobiSpotOrderCreateServiceTest {
 
     Options options = OptionsBuilder.create()
             .apiServer("http://localhost:8080")
-            .token(new Token("bewr5drtmh-1384f8dc-0ec5225d-4a44b", "155bc62c-8a165d1d-efaa8ad7-b9fda"))
+            .token(HuobiToken.INSTANCE)
             .build();
 
     HttpRequest request = HttpRequest.request().withMethod(HttpMethods.POST);
