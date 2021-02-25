@@ -17,10 +17,9 @@ public interface ExchangeService {
      * A hook invoked the service instance is created and exchange properties are set.
      * The service implementation could do properties verification and service initialization
      * by override this method.
-     * <p>
-     * This method will be invoked in the <code>build()</code> method of builder class.
-     * <br>For example: {@link SpotTradingServiceBuilder#build()}
      */
-    default void init(Options options) {}
+    default void init(Options options) {
+        // empty implementation for those who needn't override this method.
+    }
 
 }

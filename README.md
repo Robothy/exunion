@@ -18,9 +18,9 @@ You can get most services' instance through `ExchangeServiceProvider.newInstance
 
 The `newInstance` method has three parameters:
 
-+ exchange – the exchange that provide the service.
-+ serviceClazz – the exchange service clazz. For example: DepthService.class
-+ options – the options to initialize the exchange service instance.
++ `exchange`  the exchange that provide the service.
++ `serviceClazz`  the exchange service clazz. For example: DepthService.class
++ `options`  the options to initialize the exchange service instance.
 
 Here are more concrete details and samples about the usages of exunion. 
 
