@@ -15,11 +15,14 @@ import com.robothy.exunion.rest.spi.Options;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class BinanceDepthService implements DepthService, ExchangeService {
 
     private BinanceApiRestClient client;
+
+    private static final int[] validDepth = new int[]{5, 10, 20, 50, 100, 500, 1000, 5000};
 
     @Override
     public void init(Options options) {
@@ -37,8 +40,14 @@ public class BinanceDepthService implements DepthService, ExchangeService {
     }
 
     @Override
-    public Result<Depth> getDepth(Symbol symbol, int limit) throws IOException {
+    public Result<Depth> getDepth(Symbol symbol, int originLimit) throws IOException {
         try {
+            if (originLimit <= 0) {
+                throw new IllegalArgumentException("The depth limit must be a positive integer.");
+            }
+            int limit;
+            int idx = Arrays.binarySearch(validDepth, originLimit);
+            limit = idx < 0 ? validDepth[Math.max(-idx - 1, validDepth.length - 1)] : validDepth[idx];
             OrderBook orderBook = client.getOrderBook(symbol.getBase() + symbol.getQuote(), limit);
             Depth depth = new Depth();
             depth.setAsks(orderBook.getAsks().stream().map(entry -> new Depth.PriceQuotation(new BigDecimal(entry.getPrice()), new BigDecimal(entry.getQty()))).collect(Collectors.toList()));
@@ -52,4 +61,5 @@ public class BinanceDepthService implements DepthService, ExchangeService {
             throw new IOException(e.getCause());
         }
     }
+
 }
