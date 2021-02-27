@@ -1,5 +1,6 @@
 package com.robothy.exunion.rest.util;
 
+import com.robothy.exunion.core.exception.InvalidOperationException;
 import com.robothy.exunion.core.market.Depth;
 import com.robothy.exunion.core.meta.Exchange;
 import com.robothy.exunion.core.meta.Symbol;
@@ -13,7 +14,7 @@ public class MockedDepthService extends AbstractExchangeService implements Depth
 
     @Override
     public Result<Depth> getDepth(Symbol symbol) throws IOException {
-        return null;
+        throw new InvalidOperationException("Invalid Operation.");
     }
 
     @Override

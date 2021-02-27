@@ -6,5 +6,7 @@ dependencies {
     implementation project(':exunion-core')
     implementation "com.google.http-client:google-http-client:${libVersion['google-http-client.google-http-client']}"
     implementation "com.google.http-client:google-http-client-jackson2:${libVersion['google-http-client.google-http-client-jackson2']}"
+    implementation "cglib:cglib:${libVersion['cglib.cglib']}"
+
     testImplementation "com.google.http-client:google-http-client-jackson2:${libVersion['google-http-client.google-http-client-jackson2']}"
 }
