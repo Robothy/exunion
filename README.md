@@ -1,3 +1,5 @@
+<html><p style="color:red;"><b>NOTE:</b> This library is in developing, no released version so far.</p></html>
+
 # exunion
 
 [![build](https://github.com/Robothy/exunion/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/Robothy/exunion/actions/workflows/build.yml)
