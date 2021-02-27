@@ -38,36 +38,32 @@ public class HuobiSpotAccountServiceAdapter extends AbstractHuobiAuthorizedExcha
 
     @Override
     public Result<SpotAccount> query() {
-        try {
-            Account huobiSpotAccount = accountService.getAccounts()
-                    .stream().filter(account -> HuobiAccountType.SPOT.equals(account.getType())).findAny()
-                    .orElse(null);
-            if (null == huobiSpotAccount) {
-                return new Result<>("no-spot-account", "no spot account");
-            }
-
-            AccountBalance accountBalance = accountService.getAccountBalance(AccountBalanceRequest.builder().accountId(huobiSpotAccount.getId()).build());
-            SpotAccount spotAccount = new SpotAccount();
-            spotAccount.setAccountId(String.valueOf(huobiSpotAccount.getId()));
-            spotAccount.setAssets(new HashMap<>());
-            Map<String, Asset> assets = spotAccount.getAssets();
-
-            Map<String, List<Balance>> grouped = accountBalance.getList().stream().collect(Collectors.groupingBy(Balance::getCurrency));
-            grouped.forEach((currency, balanceList) -> {
-                currency = currency.toUpperCase();
-                assets.putIfAbsent(currency, new Asset(currency));
-                final Asset asset = assets.get(currency);
-                balanceList.forEach(balance -> {
-                    if (HuobiBalanceType.TRADE.equals(balance.getType())) {
-                        asset.setFreeAmount(balance.getBalance());
-                    } else if (HuobiBalanceType.FROZEN.equals(balance.getType()) || HuobiBalanceType.LOCK.equals(balance.getType())) {
-                        asset.setLockedAmount(Optional.ofNullable(asset.getLockedAmount()).orElse(BigDecimal.ZERO).add(balance.getBalance()));
-                    }
-                });
-            });
-            return new Result<>(spotAccount, accountBalance);
-        } catch (SDKException e) {
-            return new Result<>(e.getErrCode(), e.getMessage());
+        Account huobiSpotAccount = accountService.getAccounts()
+                .stream().filter(account -> HuobiAccountType.SPOT.equals(account.getType())).findAny()
+                .orElse(null);
+        if (null == huobiSpotAccount) {
+            return new Result<>("no-spot-account", "no spot account");
         }
+
+        AccountBalance accountBalance = accountService.getAccountBalance(AccountBalanceRequest.builder().accountId(huobiSpotAccount.getId()).build());
+        SpotAccount spotAccount = new SpotAccount();
+        spotAccount.setAccountId(String.valueOf(huobiSpotAccount.getId()));
+        spotAccount.setAssets(new HashMap<>());
+        Map<String, Asset> assets = spotAccount.getAssets();
+
+        Map<String, List<Balance>> grouped = accountBalance.getList().stream().collect(Collectors.groupingBy(Balance::getCurrency));
+        grouped.forEach((currency, balanceList) -> {
+            currency = currency.toUpperCase();
+            assets.putIfAbsent(currency, new Asset(currency));
+            final Asset asset = assets.get(currency);
+            balanceList.forEach(balance -> {
+                if (HuobiBalanceType.TRADE.equals(balance.getType())) {
+                    asset.setFreeAmount(balance.getBalance());
+                } else if (HuobiBalanceType.FROZEN.equals(balance.getType()) || HuobiBalanceType.LOCK.equals(balance.getType())) {
+                    asset.setLockedAmount(Optional.ofNullable(asset.getLockedAmount()).orElse(BigDecimal.ZERO).add(balance.getBalance()));
+                }
+            });
+        });
+        return new Result<>(spotAccount, accountBalance);
     }
 }
