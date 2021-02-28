@@ -2,7 +2,6 @@ package com.robothy.exunion.huobi.account;
 
 import com.huobi.client.AccountClient;
 import com.huobi.client.req.account.AccountBalanceRequest;
-import com.huobi.exception.SDKException;
 import com.huobi.model.account.Account;
 import com.huobi.model.account.AccountBalance;
 import com.huobi.model.account.Balance;
